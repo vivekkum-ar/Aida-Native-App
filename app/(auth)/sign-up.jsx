@@ -1,21 +1,39 @@
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/formField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { createUser } from '../../lib/appwrite'
+import { useGlobalContext } from "../../context/globalProvider";
 const SignUp = () => {
   const [Form, setForm] = useState({
     username:"",
     email:"",
     password:""
   })
- 
- const submit = () => {
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUser, setIsLogged } = useGlobalContext();
+ const submit = async () => {
+  if(!Form.username || !Form.email || !Form.password) {
+    Alert.alert("Error","Please fill all fields");
+  }
+  else {
+ setIsSubmitting(true);
+ try {
+  const result = await createUser(Form.email,Form.password,Form.username);
+  setUser(result);
+  setIsLogged(true);
+  router.replace("/home");
+ } catch (error) {
+  Alert.alert("Error",error.message);
  }
- const [isSubmitting, setIsSubmitting] = useState(false);
+ finally {
+    setIsSubmitting(false);
+  }
+ }
+}
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className=""  contentContainerStyle={{height: "100%"}}>
@@ -33,24 +51,24 @@ const SignUp = () => {
           <FormField
           title={"Username"}
           value={Form.username}
-          handleChangeText={(e) => {setForm({...Form,username:e})}}
+          handleChangeText={(e) => {setForm({...Form,username:e.nativeEvent.text})}}
           otherStyles={"mt-10"}
           />
           <FormField
           title={"Email"}
           value={Form.email}
-          handleChangeText={(e) => {setForm({...Form,email:e})}}
+          handleChangeText={(e) => {setForm({...Form,email:e.nativeEvent.text})}}
           otherStyles={"mt-7"}
           keyBoardType={"email-address"}
           />
           <FormField
           title={"Password"}
           value={Form.password}
-          handleChangeText={(e) => {setForm({...Form,password:e})}}
+          handleChangeText={(e) => {setForm({...Form,password:e.nativeEvent.text})}}
           otherStyles={"mt-7"}
           />
           <CustomButton
-          title={"Sign In"}
+          title={"Sign Up"}
           handlePress={submit}
           containerStyles={"mt-7"}
           isLoading={isSubmitting}
