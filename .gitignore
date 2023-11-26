@@ -33,3 +33,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# appwrite
+app/lib/appwriteConfig.js
+lib/appwriteConfig.js
