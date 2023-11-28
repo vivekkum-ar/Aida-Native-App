@@ -21,7 +21,7 @@ const SearchInput = ({
           value={query}
           placeholder={placeholder}
           placeholderTextColor={"#cdcde0"}
-          onChange={(e) => {setQuery(e)}}
+          onChange={(e) => {setQuery(e.nativeEvent.text)}}
         />
           <TouchableOpacity
             onPress={() => {
@@ -33,7 +33,7 @@ const SearchInput = ({
                 router.setParams({query});
               }
                 else{
-                  router.setParams(`/search/${query}`)
+                  router.push(`/search/${query}`)
                 }
             }}
           >
