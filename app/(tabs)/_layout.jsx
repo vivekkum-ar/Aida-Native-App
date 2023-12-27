@@ -45,15 +45,15 @@ const TabsLayout = () => {
           }}
         />
          <Tabs.Screen
-          name="bookmark"
+          name="liked"
           options={{
-            title: "Bookmark",
+            title: "Liked",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.bookmark}
+                icon={icons.like} //todo : change icon to like icon
                 color={color}
-                name="Bookmark"
+                name="Liked"
                 focused={focused}
               />
             ),

@@ -2,17 +2,17 @@ import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpa
 import React, { useState } from 'react'
 import { icons } from '../../constants'
 import EmptyState from '../../components/EmptyState'
-import { getUserPost, signOut } from '../../lib/appwrite'
+import { getLikedPost, getUserPost, signOut } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import VideoCard from '../../components/VideoCard'
 import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
 
-const Profile = () => {
+const Bookmark = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
-  const {data: posts,refetch} = useAppwrite(() => getUserPost(user.$id));
+  const {data: posts,refetch} = useAppwrite(() => getLikedPost(user.$id,0,true));
   // console.log("hi",posts)
   const onRefresh = async () => {
     setRefreshing(true);
@@ -23,7 +23,6 @@ const Profile = () => {
     await signOut();
     setUser(null);
     setIsLogged(false);
-
     router.replace("/sign-in");
   };
 
@@ -33,6 +32,10 @@ const Profile = () => {
         data={posts ?? []}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard key={item.$id} video={item} docId={item.$id}/>}
+        // onEndReachedThreshold={0.2}
+        // onEndReached={() => {
+          
+        // }}
         ListHeaderComponent={() => (
           <View className="w-full flex justify-center items-center mt-6 mb-12 px-4">
             <TouchableOpacity 
@@ -91,4 +94,4 @@ const Profile = () => {
   );
 }
 
-export default Profile
+export default Bookmark

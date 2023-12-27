@@ -26,8 +26,10 @@ const Home = () => {
       renderItem={({ item }) => (
         <VideoCard
         key={item.$id}
-        video = {item} 
+        video = {item}
+        docId = {item.$id} 
         />
+        // <Text>{item.$id}</Text>
       )}
       ListHeaderComponent={() => (
         <View className="my-16 px-4 space-y-6">
