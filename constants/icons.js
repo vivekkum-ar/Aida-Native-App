@@ -15,7 +15,8 @@ import like from "../assets/icons/like.png";
 import notliked from "../assets/icons/not-liked.png";
 import liked from "../assets/icons/liked.png";
 import share from "../assets/icons/share.png";
-import bookmarkfill from "../assets/icons/bookmarkfill.png"
+import bookmarkfill from "../assets/icons/bookmarkfill.png";
+import ai from "../assets/icons/ai.png";
 
 export default {
   play,
@@ -35,5 +36,6 @@ export default {
   notliked,
   liked,
   share,
-  bookmarkfill
+  bookmarkfill,
+  ai
 };

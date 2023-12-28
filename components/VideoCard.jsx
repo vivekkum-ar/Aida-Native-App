@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert, ToastAndroid } from "react-native";
 import { icons } from "../constants";
 import { ResizeMode, Video } from "expo-av";
 import { useGlobalContext } from "../context/globalProvider";
@@ -12,28 +12,46 @@ const VideoCard = ({
     video,
     users: { username, avatar },
     likedByUsers,
-    prompt
+    prompt,
+    $createdAt,
   },
   docId,
   ...props
 }) => {
   const { user } = useGlobalContext();
   const [likedState, setLikedState] = useState(likedByUsers.includes(user.$id) ? true : false);
+
+
+
+
   const [play, setPlay] = useState(false);
-  const handleVideoLike = async () => {
+  const handleVideoLike = () => {
+    // Alert.alert(`${likedState} ${user.$id} ${likedByUsers.includes(user.$id)}`);
     /* -------------------- transferring each from likedByUsers to likedFromUsers ------------------- */
     let likedFromUsers = [];
     likedByUsers.map((userId) => {
       likedFromUsers.push(userId);
     });
-    try {
-      await likePost(docId, likedByUsers, user.$id);
-      Alert.alert("Success", "Video liked successfully");
-    } catch (error) {
-      // console.error(video);
-      Alert.alert("failed", `Video not liked ${likedByUsers}`);
-      throw new Error(error);
+    /* ------------- Editing the likedFromUsers array based on the likedState at client ------------- */
+    if(likedState) { // if the video is already liked by the user
+      likedFromUsers = likedFromUsers.filter((userId) => userId !== user.$id);
+    } else { // if the video is not liked by the user
+      likedFromUsers.push(user.$id);
     }
+
+    /* ---- Implemented debouncing to prevent multiple requests to the server when liking a post ---- */
+    let timer;
+    if(timer) clearTimeout(timer);
+      setTimeout(() => {
+        try {
+          likePost(docId, likedFromUsers, user.$id,true);
+          // Alert.alert("Success", "Video liked successfully");
+        } catch (error) {
+          // console.error(video);
+          // Alert.alert("failed", `Video not liked ${likedByUsers}`);
+          throw new Error(error);
+        }
+      },3000);
   };
 
   return (
@@ -54,32 +72,40 @@ const VideoCard = ({
               className="font-psemibold text-sm text-white"
               numberOfLines={1}
             >
-              {title}
-              {likedByUsers.length}
+              {username}
             </Text>
             <Text
               className="text-xs text-gray-100 font-pregular"
               numberOfLines={1}
-            >
-              {username}
+            >Posted on &nbsp;
+              {new Date($createdAt).toLocaleDateString()}
             </Text>
           </View>
         </View>
 
-        <View className="pt-2">
+        <View className="flex flex-row justify-center items-center">
+      <TouchableOpacity onPress={() => Alert.alert("menu")}><Image
+          source={icons.menu}
+          className="w-10 h-10 pl-8 py-4 -scale-50"
+          resizeMode="contain"
+          style={{backgroundColor:"#161622", borderColor:"#cdcde0"}}
+          
+        /></TouchableOpacity>
+    </View>
+        {/* <View className="pt-2">
           <Image
             source={icons.menu}
             className="w-5 h-5"
             resizeMode="contain"
             on
           />
-        </View>
+        </View> */}
       </View>
 
       {play ? (
         <Video
           source={{ uri: video }}
-          className="w-full h-72 rounded-xl mt-3"
+          className="w-full h-72 rounded-xl mt-0"
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
           shouldPlay
@@ -93,7 +119,7 @@ const VideoCard = ({
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
-          className="w-full h-60 rounded-xl mt-3 relative flex justify-center items-center"
+          className="w-full h-60 rounded-xl mt-0 relative flex justify-center items-center"
         >
           <Image
             source={{ uri: thumbnail }}
@@ -124,8 +150,7 @@ const VideoCard = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setLikedState(!likedState);
-            handleVideoLike();
+            Alert.alert("Share", "Share this video");
           }}
         >
           <Image
@@ -137,8 +162,7 @@ const VideoCard = ({
         <View>
         <TouchableOpacity
           onPress={() => {
-            setLikedState(!likedState);
-            handleVideoLike();
+            Alert.alert("Bookmark", "Bookmark this video");
           }}
         >
           <Image
@@ -161,11 +185,13 @@ const VideoCard = ({
         {title}
       </Text>
       <Text
+      // role="ScrollView"
         className="font-plight pt-1 w-full text-sm text-[#cdcde0]"
         numberOfLines={3}
         ellipsizeMode="tail"
+        selectable={true}
       >
-        {prompt}
+        <Image source={icons.ai} className="h-6 w-6"></Image> {prompt}
       </Text>
     </View>
   );
