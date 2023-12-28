@@ -4,6 +4,7 @@ import { icons } from "../constants";
 import { ResizeMode, Video } from "expo-av";
 import { useGlobalContext } from "../context/globalProvider";
 import { likePost } from "../lib/appwrite";
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 
 const VideoCard = ({
   video: {
@@ -21,6 +22,10 @@ const VideoCard = ({
   const { user } = useGlobalContext();
   const [likedState, setLikedState] = useState(likedByUsers.includes(user.$id) ? true : false);
 
+  /* --------------------------------- State to show/hide the menu -------------------------------- */
+  const [visible, setVisible] = useState(false);
+  const hideMenu = () => setVisible(false);
+  const showMenu = () => setVisible(true);
 
 
 
@@ -84,13 +89,24 @@ const VideoCard = ({
         </View>
 
         <View className="flex flex-row justify-center items-center">
-      <TouchableOpacity onPress={() => Alert.alert("menu")}><Image
+      <Menu
+      
+        visible={visible}
+        anchor={<TouchableOpacity onPress={() => showMenu()}><Image
           source={icons.menu}
           className="w-10 h-10 pl-8 py-4 -scale-50"
           resizeMode="contain"
           style={{backgroundColor:"#161622", borderColor:"#cdcde0"}}
           
-        /></TouchableOpacity>
+        /></TouchableOpacity>}
+        onRequestClose={hideMenu}
+      >
+        <MenuItem style={{backgroundColor:"#cdcde0"}} className="bg-primary" onPress={hideMenu}>Menu item 1</MenuItem>
+        <MenuItem style={{backgroundColor:"#cdcde0"}} className="bg-primary" onPress={hideMenu}>Menu item 2</MenuItem>
+        <MenuItem style={{backgroundColor:"#cdcde0"}} className="bg-primary" disabled>Disabled item</MenuItem>
+        <MenuDivider color="#161622"/>
+        <MenuItem style={{backgroundColor:"#cdcde0"}} className="bg-primary" onPress={hideMenu}>Menu item 4</MenuItem>
+      </Menu>
     </View>
         {/* <View className="pt-2">
           <Image
