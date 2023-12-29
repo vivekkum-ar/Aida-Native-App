@@ -4,6 +4,7 @@ import { icons } from "../constants";
 import { ResizeMode, Video } from "expo-av";
 import { useGlobalContext } from "../context/globalProvider";
 import { likePost } from "../lib/appwrite";
+import * as Clipboard from 'expo-clipboard';
 import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 
 const VideoCard = ({
@@ -27,7 +28,11 @@ const VideoCard = ({
   const hideMenu = () => setVisible(false);
   const showMenu = () => setVisible(true);
 
-
+/* ------------- Copy to clipboard function to copy the prompt text to the clipboard ------------ */
+  const copyToClipboard = async (copiedText) => {
+    await Clipboard.setStringAsync(copiedText);
+    ToastAndroid.show("Text copied to clipboard", ToastAndroid.showWithGravity,ToastAndroid.SHORT);
+  };
 
   const [play, setPlay] = useState(false);
   const handleVideoLike = () => {
@@ -205,7 +210,8 @@ const VideoCard = ({
         className="font-plight pt-1 w-full text-sm text-[#cdcde0]"
         numberOfLines={3}
         ellipsizeMode="tail"
-        selectable={true}
+        // selectable={true}
+        onLongPress={() => copyToClipboard(prompt)}
       >
         <Image source={icons.ai} className="h-6 w-6"></Image> {prompt}
       </Text>
