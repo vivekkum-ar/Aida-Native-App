@@ -22,7 +22,7 @@ const GlobalProvider = ({ children }) => {
         }
       })
       .catch((error) => {
-        console.log("here",error);
+        // console.log("here",error);
       })
       .finally(() => {
         setLoading(false);

@@ -16,13 +16,14 @@ const VideoCard = ({
     likedByUsers,
     prompt,
     $createdAt,
+    $id
   },
   docId,
   ...props
 }) => {
   const { user } = useGlobalContext();
   const [likedState, setLikedState] = useState(likedByUsers.includes(user.$id) ? true : false);
-
+  const [likesCounter, setLikesCOunter] = useState(likedByUsers.length);
   /* --------------------------------- State to show/hide the menu -------------------------------- */
   const [visible, setVisible] = useState(false);
   const hideMenu = () => setVisible(false);
@@ -162,6 +163,7 @@ const VideoCard = ({
           onPress={() => {
             setLikedState(!likedState);
             handleVideoLike();
+            setLikesCOunter(likedState ? likesCounter - 1 : likesCounter + 1);
           }}
         >
           <Image
@@ -197,7 +199,7 @@ const VideoCard = ({
         className="font-plight w-full text-sm text-[#cdcde0]"
         numberOfLines={1}
       >
-        {likedByUsers.length} {likedByUsers.length > 1 ? "likes" : "like"}
+        {likesCounter} {likesCounter > 1 ? "likes" : "like"}
       </Text>
       <Text
         className="font-psemibold w-full text-sm text-[#cdcde0]"
@@ -212,6 +214,7 @@ const VideoCard = ({
         ellipsizeMode="tail"
         // selectable={true}
         onLongPress={() => copyToClipboard(prompt)}
+        onPress={() => ToastAndroid.show("Long press to copy", ToastAndroid.SHORT)}
       >
         <Image source={icons.ai} className="h-6 w-6"></Image> {prompt}
       </Text>
