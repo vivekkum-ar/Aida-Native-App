@@ -1,4 +1,4 @@
-import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity } from 'react-native'
+import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../../constants'
 import EmptyState from '../../components/EmptyState'
@@ -12,7 +12,30 @@ import InfoBox from '../../components/InfoBox'
 const Profile = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
-  const {data: posts,refetch} = useAppwrite(() => getUserPost(user.$id));
+  const {data,refetch} = useAppwrite(() => getUserPost(user.$id,0,true));
+  const [loading,setLoading] = useState(true);
+
+  const onScrollEnd = async () => {
+    if (data.length > 1) {
+      try {
+        ToastAndroid.show("End Reached", ToastAndroid.SHORT);
+        const res = await getUserPost(user.$id,data[data.length - 1].$id,false);
+        setData([...data, ...res]);
+        let timer;
+        if(timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          setLoading(false);
+        },2000);
+      } catch (error) {
+        let timer;
+        if(timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          setLoading(false);
+        },2000);
+        throw new Error(error);
+      }
+    } else return;
+  };
   // console.log("hi",posts)
   const onRefresh = async () => {
     setRefreshing(true);
@@ -30,7 +53,7 @@ const Profile = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={posts ?? []}
+        data={data ?? []}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard key={item.$id} video={item} docId={item.$id}/>}
         ListHeaderComponent={() => (
@@ -61,7 +84,7 @@ const Profile = () => {
 
             <View className="mt-5 flex flex-row">
               <InfoBox
-                title={posts.length || 0}
+                title={data.length || 0}
                 subtitle="Posts"
                 titleStyles="text-xl"
                 containerStyles="mr-10"
@@ -86,6 +109,15 @@ const Profile = () => {
             onRefresh={onRefresh}
           ></RefreshControl>
         }
+        onEndReachedThreshold={0.9}
+        onEndReached={() => {
+          if (data.length > 1) {
+            onScrollEnd();
+          }
+        }}
+        ListFooterComponent={() => (
+          loading && <ActivityIndicator size="50px" color="#cdcde0" />
+        )}
       ></FlatList>
     </SafeAreaView>
   );
