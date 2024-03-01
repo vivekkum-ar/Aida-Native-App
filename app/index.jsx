@@ -45,13 +45,13 @@ export default function Page() {
             Where Creativity meets innovations: embark on a journey of limitless
             exploration with Aida
           </Text>
-          <CustomButton
+          {isLogged && <CustomButton
             title={"Continue with Email"}
             handlePress={() => {
               router.push("/sign-in");
             }}
             containerStyles={"w-full mt-7"}
-          ></CustomButton>
+          ></CustomButton>}
         </View>
       </ScrollView>
       <StatusBar backgroundColor="#161622" style="light"></StatusBar>
