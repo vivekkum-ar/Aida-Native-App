@@ -10,7 +10,7 @@ import {
   StyleSheet,
   ActivityIndicatorBase,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { icons, images } from "../../constants";
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
@@ -22,6 +22,7 @@ import {
 } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
 import VideoCard from "../../components/VideoCard";
+import LottieView from "lottie-react-native";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -55,6 +56,13 @@ const Home = () => {
     await refetch();
     setRefreshing(false);
   };
+
+  const animation = useRef(null);
+  useEffect(() => {
+    // You can control the ref programmatically, rather than using autoPlay
+    animation.current?.play();
+  }, []);
+
   return (
     <SafeAreaView className="bg-primary">
       <FlatList
@@ -109,7 +117,20 @@ const Home = () => {
           }
         }}
         ListFooterComponent={() => (
-          loading && <ActivityIndicator size="50px" color="#cdcde0" />
+          loading && <View className="flex flex-row justify-center">
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 800,
+              height: 100,
+              // backgroundColor: '#eee',
+            }}
+            className="scale-150 border border-white -translate-y-10"
+            // Find more Lottie files at https://lottiefiles.com/featured
+            source={require('../../assets/LottieLoading.json')}
+          />
+        </View>
         )}
       ></FlatList>
     </SafeAreaView>

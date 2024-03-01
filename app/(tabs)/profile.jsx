@@ -1,5 +1,5 @@
-import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ActivityIndicator, ToastAndroid, Button } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../../constants'
 import EmptyState from '../../components/EmptyState'
 import { getUserPost, signOut } from '../../lib/appwrite'
@@ -8,11 +8,13 @@ import VideoCard from '../../components/VideoCard'
 import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
+import LottieView from 'lottie-react-native';
+
 
 const Profile = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
-  const {data,refetch} = useAppwrite(() => getUserPost(user.$id,0,true));
+  const {data,setData,refetch} = useAppwrite(() => getUserPost(user.$id,0,true));
   const [loading,setLoading] = useState(true);
 
   const onScrollEnd = async () => {
@@ -50,8 +52,15 @@ const Profile = () => {
     router.replace("/sign-in");
   };
 
+  const animation = useRef(null);
+  useEffect(() => {
+    // You can control the ref programmatically, rather than using autoPlay
+    animation.current?.play();
+  }, []);
+
   return (
     <SafeAreaView className="bg-primary h-full">
+      
       <FlatList
         data={data ?? []}
         keyExtractor={(item) => item.$id}
@@ -116,7 +125,20 @@ const Profile = () => {
           }
         }}
         ListFooterComponent={() => (
-          loading && <ActivityIndicator size="50px" color="#cdcde0" />
+          loading && <View className="flex flex-row justify-center">
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 800,
+              height: 100,
+              // backgroundColor: '#eee',
+            }}
+            className="scale-150 border border-white "
+            // Find more Lottie files at https://lottiefiles.com/featured
+            source={require('../../assets/LottieLoading.json')}
+          />
+        </View>
         )}
       ></FlatList>
     </SafeAreaView>

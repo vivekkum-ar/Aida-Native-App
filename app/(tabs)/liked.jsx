@@ -1,5 +1,5 @@
 import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../../constants'
 import EmptyState from '../../components/EmptyState'
 import { getLikedPost, getUserPost, signOut } from '../../lib/appwrite'
@@ -8,6 +8,7 @@ import VideoCard from '../../components/VideoCard'
 import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
+import LottieView from 'lottie-react-native'
 
 const Bookmark = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
@@ -47,6 +48,12 @@ const Bookmark = () => {
     setIsLogged(false);
     router.replace("/sign-in");
   };
+
+  const animation = useRef(null);
+  useEffect(() => {
+    // You can control the ref programmatically, rather than using autoPlay
+    animation.current?.play();
+  }, []);
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -118,7 +125,20 @@ const Bookmark = () => {
           }
         }}
         ListFooterComponent={() => (
-          loading && <ActivityIndicator size="50px" color="#cdcde0" />
+          loading && <View className="flex flex-row justify-center">
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 800,
+              height: 100,
+              // backgroundColor: '#eee',
+            }}
+            className="scale-150 border border-white "
+            // Find more Lottie files at https://lottiefiles.com/featured
+            source={require('../../assets/LottieLoading.json')}
+          />
+        </View>
         )}
       ></FlatList>
     </SafeAreaView>
