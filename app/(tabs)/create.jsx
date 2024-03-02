@@ -25,7 +25,7 @@ function Settings() {
 
 const TabBarIcon = ({icon, color, name}) => {
   return(
-    <View className="flex flex-row w-20 -translate-x-5"><Ionicons name={icon} size={25} color={color}/><Text style={{color:color}} className="font-pmedium">{" "}{name}</Text></View>
+    <View className="flex flex-row w-20 items-center justify-center -translate-x-5"><Ionicons name={icon} size={25} color={color}/><Text style={{color:color}} className="font-pmedium">{" "}{name}</Text></View>
   );
 }
 function Create() {
@@ -70,7 +70,7 @@ function Create() {
           <TabBarIcon
             icon="videocam-outline"
             color={color}
-            name="Imagine"
+            name="A.I. Video"
           />
         ),
         tabBarIndicatorStyle: {

@@ -66,7 +66,7 @@ const Profile = () => {
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard key={item.$id} video={item} docId={item.$id}/>}
         ListHeaderComponent={() => (
-          <View className="w-full flex justify-center items-center mt-6 mb-12 px-4">
+          <View className="w-full flex justify-center items-center mt-12 mb-12 px-4">
             <TouchableOpacity 
             className="flex w-full items-end mb-10"
             onPress={logout}

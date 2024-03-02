@@ -66,8 +66,8 @@ const Bookmark = () => {
           
         // }}
         ListHeaderComponent={() => (
-          <View className="w-full flex justify-center items-center mt-6 mb-12 px-4">
-            <TouchableOpacity 
+          <View className="w-full flex justify-center items-center mt-12 mb-12 px-4">
+            {/* <TouchableOpacity 
             className="flex w-full items-end mb-10"
             onPress={logout}
             >
@@ -76,7 +76,7 @@ const Bookmark = () => {
                 resizeMode="contain"
                 className="w-6 h-6"
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
               <Image
                 source={{ uri: user?.avatar }}
@@ -94,7 +94,7 @@ const Bookmark = () => {
             <View className="mt-5 flex flex-row">
               <InfoBox
                 title={data.length || 0}
-                subtitle="Posts"
+                subtitle="Liked Posts"
                 titleStyles="text-xl"
                 containerStyles="mr-10"
               />
