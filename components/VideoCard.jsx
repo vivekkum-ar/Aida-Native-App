@@ -15,6 +15,7 @@ import { followPostUser, likePost } from "../lib/appwrite";
 import * as Clipboard from "expo-clipboard";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 
+
 const VideoCard = ({
   video: {
     title,

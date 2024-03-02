@@ -1,20 +1,22 @@
-import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native'
+import { View, Text, Image, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ToastAndroid } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../../constants'
 import EmptyState from '../../components/EmptyState'
-import { getLikedPost, getUserPost, signOut } from '../../lib/appwrite'
+import { getLikedPost, signOut } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import VideoCard from '../../components/VideoCard'
 import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
 import LottieView from 'lottie-react-native'
+import millify from 'millify'
 
-const Bookmark = () => {
+const Liked = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
   const {data,setData,refetch} = useAppwrite(() => getLikedPost(user.$id,0,true));
   const [loading,setLoading] = useState(true);
+  const [likedTabActive,setLikeTabActive] = useState(true);
   // console.log("hi",posts)
   const onScrollEnd = async () => {
     if (data.length > 1) {
@@ -60,13 +62,15 @@ const Bookmark = () => {
       <FlatList
         data={data ?? []}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <VideoCard key={item.$id} video={item} docId={item.$id}/>}
+        renderItem={({ item }) => (
+          <VideoCard key={item.$id} video={item} docId={item.$id} />
+        )}
         // onEndReachedThreshold={0.2}
         // onEndReached={() => {
-          
+
         // }}
         ListHeaderComponent={() => (
-          <View className="w-full flex justify-center items-center mt-12 mb-12 px-4">
+          <View className="w-full flex justify-center items-center mt-12 px-4">
             {/* <TouchableOpacity 
             className="flex w-full items-end mb-10"
             onPress={logout}
@@ -76,7 +80,7 @@ const Bookmark = () => {
                 resizeMode="contain"
                 className="w-6 h-6"
               />
-            </TouchableOpacity> */}
+              </TouchableOpacity> */}
             <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
               <Image
                 source={{ uri: user?.avatar }}
@@ -102,7 +106,28 @@ const Bookmark = () => {
                 title={"0"}
                 subtitle="Saved Posts"
                 titleStyles="text-xl"
+                containerStyles="mr-10"
               />
+              <InfoBox
+                title={millify(user.followedByUsers.length) || 0}
+                subtitle="Followers"
+                titleStyles="text-xl"
+              />
+            </View>
+
+            {/* ----------------------------- Manually designed tab bar component ---------------------------- */}
+            <View className="w-screen h-12 my-4 flex flex-row justify-center items-center">
+              <TouchableOpacity className={`py-2 basis-1/2 ${likedTabActive ? "border-b-4 border-secondary" : ""}`} onPress={() => setLikeTabActive(true)}>
+              <Text className={`text-center text-sm font-pmedium flex flex-row justify-center items-end ${likedTabActive ? "text-secondary" : "text-[#cdcde0]"}`}>
+                  <Image source={likedTabActive ? icons.likeactiveyellow : icons.like} className="w-8 h-6" resizeMode="contain"></Image>Liked
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity className={`py-2 basis-1/2 ${!likedTabActive ? "border-b-4 border-secondary" : ""}`} onPress={() => setLikeTabActive(false)}>
+                <Text className={`text-center text-sm font-pmedium flex flex-row justify-center items-end ${!likedTabActive ? "text-secondary" : "text-[#cdcde0]"}`}>
+                  <Image source={!likedTabActive ? icons.bookmarkfillactiveyellow : icons.bookmarkfill} className="w-8 h-6" resizeMode="contain"></Image>Saved
+                </Text>
+                
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -124,25 +149,27 @@ const Bookmark = () => {
             onScrollEnd();
           }
         }}
-        ListFooterComponent={() => (
-          loading && <View className="flex flex-row justify-center">
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={{
-              width: 800,
-              height: 100,
-              // backgroundColor: '#eee',
-            }}
-            className="scale-150 border border-white "
-            // Find more Lottie files at https://lottiefiles.com/featured
-            source={require('../../assets/LottieLoading.json')}
-          />
-        </View>
-        )}
+        ListFooterComponent={() =>
+          loading && (
+            <View className="flex flex-row justify-center">
+              <LottieView
+                autoPlay
+                ref={animation}
+                style={{
+                  width: 800,
+                  height: 100,
+                  // backgroundColor: '#eee',
+                }}
+                className="scale-150 border border-white "
+                // Find more Lottie files at https://lottiefiles.com/featured
+                source={require("../../assets/LottieLoading.json")}
+              />
+            </View>
+          )
+        }
       ></FlatList>
     </SafeAreaView>
   );
 }
 
-export default Bookmark
+export default Liked

@@ -99,7 +99,7 @@ const Profile = () => {
                 containerStyles="mr-10"
               />
               <InfoBox
-                title={millify(data[0]?.users.followedByUsers.length) || 0}
+                title={millify(user.followedByUsers.length) || 0}
                 subtitle="Followers"
                 titleStyles="text-xl"
               />

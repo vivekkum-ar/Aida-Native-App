@@ -17,6 +17,8 @@ import liked from "../assets/icons/liked.png";
 import share from "../assets/icons/share.png";
 import bookmarkfill from "../assets/icons/bookmarkfill.png";
 import ai from "../assets/icons/ai.png";
+import bookmarkfillactiveyellow from "../assets/icons/bookmarkfillactiveyellow.png";
+import likeactiveyellow from "../assets/icons/likeactiveyellow.png";
 
 export default {
   play,
@@ -37,5 +39,7 @@ export default {
   liked,
   share,
   bookmarkfill,
-  ai
+  ai,
+  bookmarkfillactiveyellow,
+  likeactiveyellow
 };
