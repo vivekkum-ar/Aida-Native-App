@@ -9,7 +9,7 @@ import { router } from 'expo-router'
 import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
 import LottieView from 'lottie-react-native';
-
+import millify from "millify";
 
 const Profile = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
@@ -99,7 +99,7 @@ const Profile = () => {
                 containerStyles="mr-10"
               />
               <InfoBox
-                title="1.2k"
+                title={millify(data[0]?.users.followedByUsers.length) || 0}
                 subtitle="Followers"
                 titleStyles="text-xl"
               />

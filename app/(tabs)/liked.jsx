@@ -99,8 +99,8 @@ const Bookmark = () => {
                 containerStyles="mr-10"
               />
               <InfoBox
-                title="1.2k"
-                subtitle="Followers"
+                title={"0"}
+                subtitle="Saved Posts"
                 titleStyles="text-xl"
               />
             </View>
