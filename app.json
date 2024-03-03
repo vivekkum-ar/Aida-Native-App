@@ -2,7 +2,7 @@
   "expo": {
     "name": "Aida",
     "slug": "Aida",
-    "scheme": "Aida",
+    "scheme": ["aida"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/icon.png",
@@ -20,6 +20,31 @@
     },
     "android": {
       "package": "com.viv.aida",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "aidain.web.app",
+              "pathPrefix": "/records"
+            },
+            {
+              "scheme": "https",
+              "host": "aidain.firebaseapp.com"
+            },
+            {
+              "scheme": "https",
+              "host": "*aidain.web.app"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/icon.png",
         "backgroundColor": "#ffffff"
@@ -30,6 +55,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2e3d8621-5a43-4043-a93d-86bd6037c93c"
+      }
+    }
   }
 }

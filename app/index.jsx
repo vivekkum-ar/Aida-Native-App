@@ -1,13 +1,39 @@
 import { Link, Redirect, router } from "expo-router";
-import { Image, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import CustomButton from "../components/CustomButton";
 import { StatusBar } from "expo-status-bar";
 import { useGlobalContext } from "../context/globalProvider";
+import { useEffect, useState } from "react";
+
 export default function Page() {
   const { loading, isLogged } = useGlobalContext();
-  if (!loading && isLogged) return <Redirect href="/home" />;
+  
+  /* --------- fixes the issue of button always being visible even when user is logged in --------- */
+  const btnVisible = () => {
+    if (loading)
+      return (
+        <View className="mt-10 flex flex-row justify-center items-center">
+          <ActivityIndicator size="large" color="#cdcde0" />
+          <Text className="text-sm font-pmedium text-[#cdcde0] ">
+            Loading...
+          </Text>
+        </View>
+      );
+    else if(isLogged) return <Redirect href="/home" />;
+    else
+      return (
+        <CustomButton
+          title={"Continue with Email"}
+          handlePress={() => {
+            router.push("/sign-in");
+          }}
+          containerStyles={"w-full mt-7"}
+        ></CustomButton>
+      );
+  };
+  
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -45,13 +71,7 @@ export default function Page() {
             Where Creativity meets innovations: embark on a journey of limitless
             exploration with Aida
           </Text>
-          {isLogged && <CustomButton
-            title={"Continue with Email"}
-            handlePress={() => {
-              router.push("/sign-in");
-            }}
-            containerStyles={"w-full mt-7"}
-          ></CustomButton>}
+          {btnVisible()}
         </View>
       </ScrollView>
       <StatusBar backgroundColor="#161622" style="light"></StatusBar>

@@ -27,30 +27,30 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGlobalContext } from "../../context/globalProvider";
 
 const Home = () => {
-  const {user} = useGlobalContext();
+  const { user } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
   const { data, setData, refetch } = useAppwrite(getAllPosts);
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const latestData = useAppwrite(getLatestPosts);
-  const [saveIndex,setSaveIndex] = useState();
-  console.log("1",data)
+  const [saveIndex, setSaveIndex] = useState();
+  // console.log("1",data)
   const onScrollEnd = async () => {
     if (data.length > 1) {
       try {
-        ToastAndroid.show("End Reached", ToastAndroid.SHORT);
+        // ToastAndroid.show("End Reached", ToastAndroid.SHORT);
         const res = await getAllPostsAfter(data[data.length - 1].$id);
         setData([...data, ...res]);
         let timer;
-        if(timer) clearTimeout(timer);
+        if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setLoading(false);
-        },2000);
+        }, 2000);
       } catch (error) {
         let timer;
-        if(timer) clearTimeout(timer);
+        if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setLoading(false);
-        },2000);
+        }, 2000);
         throw new Error(error);
       }
     } else return;
@@ -67,39 +67,96 @@ const Home = () => {
     animation.current?.play();
   }, []);
 
-  
   /* ---------------------------------------------------------------------------------------------- */
   /*                           Function to handle saving the posts offline                          */
   /* ---------------------------------------------------------------------------------------------- */
+  // let output = "";
   const handleStorePost = async (saveId) => {
     try {
+      // If saveId is undefined, return early to avoid saving an empty/null object
+      if (saveId === undefined) return;
+      // output+="passed1";
+      // Retrieve previous values from AsyncStorage
       const prevJsonValue = await AsyncStorage.getItem(user.$id);
-
-      /* ---------- if already saved posts then append the new post else create a fresh Array --------- */
-      // if(JSON.parse(prevJsonValue)[0] == null){
-      //   const jsonValue = JSON.stringify([data[saveId]]);
-      // } else{
-      //   const jsonValue = JSON.stringify([...JSON.parse(prevJsonValue),data[saveId]]);
-      // }
-      const jsonValue = JSON.stringify(JSON.parse(prevJsonValue)[0] == null ? [data[saveId]] : [...JSON.parse(prevJsonValue),data[saveId]]);
-      console.log(jsonValue);
-      await AsyncStorage.setItem(user.$id, jsonValue);
-      ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
+      // output+="passed2";
+      const prevIds = await AsyncStorage.getItem(`${user.$id}_ids`);
+      // output+="passed3";
+      // Parse the retrieved values, defaulting to empty arrays if null
+      const parsedPrevJsonValue = prevJsonValue ? JSON.parse(prevJsonValue) : [];
+      // output+="passed4";
+      const parsedPrevIds = prevIds ? JSON.parse(prevIds) : [];
+      // output+="passed5";
+      // Check if the posts have been saved before
+      if (parsedPrevIds.length > 0) {
+        // output+="passed6";
+        // If the post is not already saved, save it
+        if (!parsedPrevIds.includes(data[saveId].$id)) {
+          // output+="passed7";
+          parsedPrevIds.push(data[saveId].$id);
+          // output+="passed8";
+          parsedPrevJsonValue.push(data[saveId]);
+          // output+="passed9";
+          await AsyncStorage.setItem(
+            `${user.$id}_ids`,
+            JSON.stringify(parsedPrevIds)
+          );
+          // output+="passed10";
+          await AsyncStorage.setItem(
+            user.$id,
+            JSON.stringify(parsedPrevJsonValue)
+          );
+          // output+="passed11";
+          ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show("Post already saved", ToastAndroid.SHORT);
+          // output+="passed12";
+        }
+      } else {
+        // If no post is saved, save the current post
+        parsedPrevIds.push(data[saveId].$id);
+        // output+="passed13";
+        parsedPrevJsonValue.push(data[saveId]);
+        // output+="passed14";
+        await AsyncStorage.setItem(
+          `${user.$id}_ids`,
+          JSON.stringify(parsedPrevIds)
+        );
+        // output+="passed15";
+        await AsyncStorage.setItem(
+          user.$id,
+          JSON.stringify(parsedPrevJsonValue)
+        );
+        // output+="passed16";
+        ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
+      }
     } catch (error) {
-      // saving error
+      // Saving error
       ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
+      Alert.alert("Error", error.message, [
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ]);
       throw new Error(error);
     }
   };
 
+  // Used to save the post offline
+  useEffect(() => {
+    handleStorePost(saveIndex);
+  }, [saveIndex]);
 
   return (
     <SafeAreaView className="bg-primary">
       <FlatList
         data={data}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item,index }) => (
-          <VideoCard key={item.$id} video={item} docId={item.$id} saveId={index} updateSaveId={setSaveIndex} />
+        renderItem={({ item, index }) => (
+          <VideoCard
+            key={item.$id}
+            video={item}
+            docId={item.$id}
+            saveId={index}
+            updateSaveId={setSaveIndex}
+          />
           // <Text>{item.$id}</Text>
         )}
         ListHeaderComponent={() => (
@@ -146,22 +203,24 @@ const Home = () => {
             onScrollEnd();
           }
         }}
-        ListFooterComponent={() => (
-          loading && <View className="flex flex-row justify-center">
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={{
-              width: 800,
-              height: 100,
-              // backgroundColor: '#eee',
-            }}
-            className="scale-150 border border-white -translate-y-10"
-            // Find more Lottie files at https://lottiefiles.com/featured
-            source={require('../../assets/LottieLoading.json')}
-          />
-        </View>
-        )}
+        ListFooterComponent={() =>
+          loading && (
+            <View className="flex flex-row justify-center">
+              <LottieView
+                autoPlay
+                ref={animation}
+                style={{
+                  width: 800,
+                  height: 100,
+                  // backgroundColor: '#eee',
+                }}
+                className="scale-150 border border-white -translate-y-10"
+                // Find more Lottie files at https://lottiefiles.com/featured
+                source={require("../../assets/LottieLoading.json")}
+              />
+            </View>
+          )
+        }
       ></FlatList>
     </SafeAreaView>
   );

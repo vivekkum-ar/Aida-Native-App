@@ -80,6 +80,7 @@ const TabsLayout = () => {
           options={{
             title: "Profile",
             headerShown: false,
+            // href: "/profile",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.profile}

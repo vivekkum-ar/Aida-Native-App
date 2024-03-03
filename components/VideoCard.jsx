@@ -31,6 +31,9 @@ const VideoCard = ({
   docId,
   saveId,
   updateSaveId,
+  deleteVisible,
+  deleteId,
+  updateDeleteId,
   ...props
 }) => {
   const { user } = useGlobalContext();
@@ -285,11 +288,14 @@ const VideoCard = ({
         <View>
           <TouchableOpacity
             onPress={() => {
-              updateSaveId(saveId);
-              // handleStorePost(video);
+              if(deleteVisible){
+                updateDeleteId(deleteId);
+              } else {
+                updateSaveId(saveId);
+              }
             }}
           >
-            <Image source={icons.bookmarkfill} className="h-8 w-8"></Image>
+            <Image source={deleteVisible ? icons.deleteIcon : icons.bookmarkfill} className="h-8 w-8"></Image>
           </TouchableOpacity>
         </View>
       </View>
