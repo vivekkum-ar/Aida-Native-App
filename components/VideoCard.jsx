@@ -29,6 +29,8 @@ const VideoCard = ({
     createdByUser,
   },
   docId,
+  saveId,
+  updateSaveId,
   ...props
 }) => {
   const { user } = useGlobalContext();
@@ -283,7 +285,8 @@ const VideoCard = ({
         <View>
           <TouchableOpacity
             onPress={() => {
-              Alert.alert("Bookmark", "Bookmark this video");
+              updateSaveId(saveId);
+              // handleStorePost(video);
             }}
           >
             <Image source={icons.bookmarkfill} className="h-8 w-8"></Image>

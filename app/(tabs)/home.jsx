@@ -23,13 +23,17 @@ import {
 import useAppwrite from "../../lib/useAppwrite";
 import VideoCard from "../../components/VideoCard";
 import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalContext } from "../../context/globalProvider";
 
 const Home = () => {
+  const {user} = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
   const { data, setData, refetch } = useAppwrite(getAllPosts);
   const [loading,setLoading] = useState(true);
   const latestData = useAppwrite(getLatestPosts);
-  // console.log(latestData.data)
+  const [saveIndex,setSaveIndex] = useState(0);
+  console.log("1",data)
   const onScrollEnd = async () => {
     if (data.length > 1) {
       try {
@@ -63,13 +67,36 @@ const Home = () => {
     animation.current?.play();
   }, []);
 
+  
+  /* ---------------------------------------------------------------------------------------------- */
+  /*                           Function to handle saving the post offline                           */
+  /* ---------------------------------------------------------------------------------------------- */
+  const handleStorePost = async (saveId) => {
+    try {
+      const jsonValue = JSON.stringify([data[saveId]]);
+      console.log(jsonValue);
+      await AsyncStorage.setItem(user.$id, jsonValue);
+      ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
+    } catch (e) {
+      // saving error
+      ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
+      throw new Error(e);
+    }
+  };
+  
+  useEffect(() => {
+    console.log("iidhar dekh",saveIndex);
+    handleStorePost(saveIndex);
+  },[saveIndex]);
+
+
   return (
     <SafeAreaView className="bg-primary">
       <FlatList
         data={data}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <VideoCard key={item.$id} video={item} docId={item.$id} />
+        renderItem={({ item,index }) => (
+          <VideoCard key={item.$id} video={item} docId={item.$id} saveId={index} updateSaveId={setSaveIndex} />
           // <Text>{item.$id}</Text>
         )}
         ListHeaderComponent={() => (

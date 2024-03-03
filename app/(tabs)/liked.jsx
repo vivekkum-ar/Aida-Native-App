@@ -10,6 +10,7 @@ import { useGlobalContext } from '../../context/globalProvider'
 import InfoBox from '../../components/InfoBox'
 import LottieView from 'lottie-react-native'
 import millify from 'millify'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Liked = () => {
   const { user ,setUser, setIsLogged } = useGlobalContext();
@@ -17,6 +18,9 @@ const Liked = () => {
   const {data,setData,refetch} = useAppwrite(() => getLikedPost(user.$id,0,true));
   const [loading,setLoading] = useState(true);
   const [likedTabActive,setLikeTabActive] = useState(true);
+  const [saveData,setSaveData] = useState([]);
+  const [saveIndex,setSaveIndex] = useState();
+
   // console.log("hi",posts)
   const onScrollEnd = async () => {
     if (data.length > 1) {
@@ -57,13 +61,63 @@ const Liked = () => {
     animation.current?.play();
   }, []);
 
+
+  /* ---------------------------------------------------------------------------------------------- */
+  /*                           Function to handle saving the post offline                           */
+  /* ---------------------------------------------------------------------------------------------- */
+  const handleStorePost = async (saveId) => {
+    try {
+      const jsonValue = JSON.stringify([data[saveId]]);
+      console.log(jsonValue);
+      await AsyncStorage.setItem(user.$id, jsonValue);
+      ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
+    } catch (error) {
+      // saving error
+      ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
+      throw new Error(error);
+    }
+  };
+  
+  /* ---------------------------------------------------------------------------------------------- */
+  /*                         Function to handle retreiving the post offline                         */
+  /* ---------------------------------------------------------------------------------------------- */
+  const handleRetrievePost = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem(user.$id);
+      // console.log("jsonValue",JSON.parse(jsonValue)[0] == null);
+      // console.log("saveData",saveData);
+
+      /* ------------------- carefully crafted check so saveData is always an Array ------------------- */
+      if(JSON.parse(jsonValue)[0] == null) return;  
+      setSaveData(JSON.parse(jsonValue));
+      
+    } catch (error) {
+      // error reading value
+      throw new Error(error);
+    }
+  };
+
+  useEffect(() => {
+    // return() => {
+      if(!isNaN(saveIndex) || saveIndex != undefined || saveIndex != null){
+        console.log("iidhar dekh",saveIndex);
+        handleStorePost(saveIndex);
+      }
+    // }
+  },[saveIndex]);
+
+  // useEffect(() => {
+  //     handleRetrievePost();
+  // }, [])
+
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={data ?? []}
+        data={likedTabActive ? (data ?? []) : saveData}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <VideoCard key={item.$id} video={item} docId={item.$id} />
+        renderItem={({ item , index }) => (
+          <VideoCard key={item.$id} video={item} docId={item.$id} saveId={index} updateSaveId={setSaveIndex} />
         )}
         // onEndReachedThreshold={0.2}
         // onEndReached={() => {
@@ -103,7 +157,7 @@ const Liked = () => {
                 containerStyles="mr-10"
               />
               <InfoBox
-                title={"0"}
+                title={saveData.length}
                 subtitle="Saved Posts"
                 titleStyles="text-xl"
                 containerStyles="mr-10"
@@ -122,7 +176,7 @@ const Liked = () => {
                   <Image source={likedTabActive ? icons.likeactiveyellow : icons.like} className="w-8 h-6" resizeMode="contain"></Image>Liked
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity className={`py-2 basis-1/2 ${!likedTabActive ? "border-b-4 border-secondary" : ""}`} onPress={() => setLikeTabActive(false)}>
+              <TouchableOpacity className={`py-2 basis-1/2 ${!likedTabActive ? "border-b-4 border-secondary" : ""}`} onPress={() => {setLikeTabActive(false); handleRetrievePost();}}>
                 <Text className={`text-center text-sm font-pmedium flex flex-row justify-center items-end ${!likedTabActive ? "text-secondary" : "text-[#cdcde0]"}`}>
                   <Image source={!likedTabActive ? icons.bookmarkfillactiveyellow : icons.bookmarkfill} className="w-8 h-6" resizeMode="contain"></Image>Saved
                 </Text>
