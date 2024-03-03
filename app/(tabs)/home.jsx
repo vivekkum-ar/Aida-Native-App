@@ -32,7 +32,7 @@ const Home = () => {
   const { data, setData, refetch } = useAppwrite(getAllPosts);
   const [loading,setLoading] = useState(true);
   const latestData = useAppwrite(getLatestPosts);
-  const [saveIndex,setSaveIndex] = useState(0);
+  const [saveIndex,setSaveIndex] = useState();
   console.log("1",data)
   const onScrollEnd = async () => {
     if (data.length > 1) {
@@ -69,25 +69,28 @@ const Home = () => {
 
   
   /* ---------------------------------------------------------------------------------------------- */
-  /*                           Function to handle saving the post offline                           */
+  /*                           Function to handle saving the posts offline                          */
   /* ---------------------------------------------------------------------------------------------- */
   const handleStorePost = async (saveId) => {
     try {
-      const jsonValue = JSON.stringify([data[saveId]]);
+      const prevJsonValue = await AsyncStorage.getItem(user.$id);
+
+      /* ---------- if already saved posts then append the new post else create a fresh Array --------- */
+      // if(JSON.parse(prevJsonValue)[0] == null){
+      //   const jsonValue = JSON.stringify([data[saveId]]);
+      // } else{
+      //   const jsonValue = JSON.stringify([...JSON.parse(prevJsonValue),data[saveId]]);
+      // }
+      const jsonValue = JSON.stringify(JSON.parse(prevJsonValue)[0] == null ? [data[saveId]] : [...JSON.parse(prevJsonValue),data[saveId]]);
       console.log(jsonValue);
       await AsyncStorage.setItem(user.$id, jsonValue);
       ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
-    } catch (e) {
+    } catch (error) {
       // saving error
       ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
-      throw new Error(e);
+      throw new Error(error);
     }
   };
-  
-  useEffect(() => {
-    console.log("iidhar dekh",saveIndex);
-    handleStorePost(saveIndex);
-  },[saveIndex]);
 
 
   return (

@@ -63,11 +63,19 @@ const Liked = () => {
 
 
   /* ---------------------------------------------------------------------------------------------- */
-  /*                           Function to handle saving the post offline                           */
+  /*                           Function to handle saving the posts offline                          */
   /* ---------------------------------------------------------------------------------------------- */
   const handleStorePost = async (saveId) => {
     try {
-      const jsonValue = JSON.stringify([data[saveId]]);
+      const prevJsonValue = await AsyncStorage.getItem(user.$id);
+
+      /* ---------- if already saved posts then append the new post else create a fresh Array --------- */
+      // if(JSON.parse(prevJsonValue)[0] == null){
+      //   const jsonValue = JSON.stringify([data[saveId]]);
+      // } else{
+      //   const jsonValue = JSON.stringify([...JSON.parse(prevJsonValue),data[saveId]]);
+      // }
+      const jsonValue = JSON.stringify(JSON.parse(prevJsonValue)[0] == null ? [data[saveId]] : [...JSON.parse(prevJsonValue),data[saveId]]);
       console.log(jsonValue);
       await AsyncStorage.setItem(user.$id, jsonValue);
       ToastAndroid.show("Post Saved", ToastAndroid.SHORT);
@@ -90,25 +98,23 @@ const Liked = () => {
       /* ------------------- carefully crafted check so saveData is always an Array ------------------- */
       if(JSON.parse(jsonValue)[0] == null) return;  
       setSaveData(JSON.parse(jsonValue));
-      
+
     } catch (error) {
       // error reading value
       throw new Error(error);
     }
   };
 
-  useEffect(() => {
-    // return() => {
-      if(!isNaN(saveIndex) || saveIndex != undefined || saveIndex != null){
-        console.log("iidhar dekh",saveIndex);
-        handleStorePost(saveIndex);
-      }
-    // }
-  },[saveIndex]);
+ /* ---------------------------------------------------------------------------------------------- */
+ /*                        Empty the saved data (ONLY FOR DEBUGGING PURPOSE)                       */
+ /* ---------------------------------------------------------------------------------------------- */
+//   useEffect(() => {const handle = async () => {
+//   //     handleRetrievePost();
+// await AsyncStorage.setItem(user.$id, JSON.stringify([]));
 
-  // useEffect(() => {
-  //     handleRetrievePost();
-  // }, [])
+//   }
+// handle();
+// }, [])
 
 
   return (
