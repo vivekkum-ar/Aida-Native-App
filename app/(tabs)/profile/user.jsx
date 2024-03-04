@@ -6,8 +6,7 @@ const user = () => {
 
   return (
     <View>
-      
-        <Text className="text-lg text-secondary-200 font-psemibold">main</Text>
+      <Text className="text-lg text-secondary-200 font-psemibold">main</Text>
     </View>
   )
 }

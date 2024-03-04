@@ -20,6 +20,7 @@ import ai from "../assets/icons/ai.png";
 import bookmarkfillactiveyellow from "../assets/icons/bookmarkfillactiveyellow.png";
 import likeactiveyellow from "../assets/icons/likeactiveyellow.png";
 import deleteIcon from "../assets/icons/delete.png";
+import linesmenu from "../assets/icons/lines-menu.png";
 
 export default {
   play,
@@ -43,5 +44,6 @@ export default {
   ai,
   bookmarkfillactiveyellow,
   likeactiveyellow,
-  deleteIcon
+  deleteIcon,
+  linesmenu,
 };

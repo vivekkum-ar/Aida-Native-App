@@ -13,13 +13,17 @@ import {
   import { getUserPost, signOut } from "../../../lib/appwrite";
   import useAppwrite from "../../../lib/useAppwrite";
   import VideoCard from "../../../components/VideoCard";
-  import { router } from "expo-router";
+  import { router,useNavigation } from "expo-router";
   import { useGlobalContext } from "../../../context/globalProvider";
   import InfoBox from "../../../components/InfoBox";
   import LottieView from "lottie-react-native";
   import millify from "millify";
+  import AsyncStorage from "@react-native-async-storage/async-storage";
+  import { Ionicons } from "@expo/vector-icons";
+  // import { DrawerActions } from "expo-router/drawer";
   
   const UserDashboard = () => {
+    const navigation = useNavigation();
     const { user, setIsLogged } = useGlobalContext();
     const [refreshing, setRefreshing] = useState(false);
     const { data, setData, refetch } = useAppwrite(() =>
@@ -96,14 +100,17 @@ import {
           ListHeaderComponent={() => (
             <View className="w-full flex justify-center items-center mt-12 mb-12 px-4">
               <TouchableOpacity
-                className="flex w-full items-end mb-10"
-                onPress={logout}
+                className="flex w-full items-end mb-6"
+                onPress={() => navigation.openDrawer()}
+                activeOpacity={0.5}
               >
+                <View className="border border-[#cdcde0] opacity-70 p-2 rounded-lg">
                 <Image
-                  source={icons.logout}
+                  source={icons.linesmenu}
                   resizeMode="contain"
-                  className="w-6 h-6"
+                  className="w-6 h-6 "
                 />
+                </View>
               </TouchableOpacity>
               <View className="w-16 h-16 border border-secondary rounded-lg flex justify-center items-center">
                 <Image
