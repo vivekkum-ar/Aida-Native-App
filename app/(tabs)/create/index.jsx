@@ -1,14 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import FormField from '../components/formField'
+import FormField from '../../../components/formField'
 import { ResizeMode, Video } from 'expo-av'
-import { icons, images } from '../constants'
-import CustomButton from '../components/CustomButton'
+import { icons, images } from '../../../constants'
+import CustomButton from '../../../components/CustomButton'
 import * as DocumentPicker from 'expo-document-picker'
 import { router } from 'expo-router'
-import { createVideo } from '../lib/appwrite'
-import { useGlobalContext } from '../context/globalProvider'
+import { createVideo } from '../../../lib/appwrite'
+import { useGlobalContext } from '../../../context/globalProvider'
 const CreateUpload = () => {
   const {user} = useGlobalContext()
   const [uploading, setUploading] = useState(false)
