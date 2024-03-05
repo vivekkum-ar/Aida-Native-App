@@ -18,6 +18,7 @@ const FormField = ({
         <TextInput
           className="flex-1 text-white font-psemibold text-base"
           value={value}
+          keyboardType={props.keyBoardType}
           placeholder={placeholder}
           placeholderTextColor={"#7b7b8d"}
           onChange={handleChangeText}

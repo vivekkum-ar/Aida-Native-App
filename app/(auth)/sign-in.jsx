@@ -74,7 +74,7 @@ const SignIn = () => {
             otherStyles={"mt-7"}
           />
           <Pressable onPress={() => navigation.navigate("reset-pass")}>
-          <View className="border border-white flex flex-row justify-end px-4 py-1">
+          <View className="flex flex-row justify-end px-4 py-1">
             <Text className="text-[#cdcde0] text-xs font-plight">Forgot Password ?</Text>
             <Text className="text-secondary text-xs font-pregular pl-1">Reset here</Text>
           </View>

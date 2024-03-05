@@ -1,10 +1,17 @@
-import { StyleSheet } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useMemo, useRef } from "react";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import GlobalProvider from "../context/globalProvider";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import CustomBottomSheet from "../components/CustomBottomSheet";
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
   const [fontsLoaded, error] = useFonts({
@@ -19,7 +26,16 @@ const RootLayout = () => {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
+  const bottomSheetModalRef = useRef(null);
+  // callbacks
+const handlePresentModalPress = useCallback(() => {
+  bottomSheetModalRef.current?.present();
+}, []);
+
+
+
   useEffect(() => {
+    handlePresentModalPress();
     if (error) throw error;
 
     if (fontsLoaded) {
@@ -34,18 +50,25 @@ const RootLayout = () => {
   return (
     <>
       <GlobalProvider>
-        <BottomSheetModalProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="search/[query]"
-              options={{ headerShown: false }}
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="search/[query]"
+                options={{ headerShown: false }}
+              />
+              {/* <Stack.Screen name="shared/index" options={{presentation:"modal"}} /> */}
+            </Stack>
+            <CustomBottomSheet
+              title="Awesome 🎉"
+              ref={bottomSheetModalRef}
+              snapPoints={["10%", "25%"]}
             />
-            {/* <Stack.Screen name="shared/index" options={{presentation:"modal"}} /> */}
-          </Stack>
-        </BottomSheetModalProvider>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
       </GlobalProvider>
     </>
   );
