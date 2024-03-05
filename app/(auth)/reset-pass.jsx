@@ -1,32 +1,32 @@
-import { View, Text, ScrollView, Image, Alert, Pressable } from "react-native";
+import { View, Text, ScrollView, Image, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import FormField from "../../components/formField";
 import CustomButton from "../../components/CustomButton";
-import { Link, router, useNavigation } from "expo-router";
+import { Link, router } from "expo-router";
 import { getCurrentUser, sendResetEmail, signIn } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/globalProvider";
 const SignIn = () => {
-  const navigation = useNavigation();
   const { setUser, setIsLogged } = useGlobalContext();
   const [Form, setForm] = useState({
     email: "",
     password: "",
   });
+  const [otpCode, setOtpCode] = useState("");
 
-  const submit = async () => {
-    if (!Form.email || !Form.password) {
-      Alert.alert("Error", "Please fill all fields");
-      // return;
+  const handleReset = async () => {
+    var code = Math.floor(100000 + Math.random() * 900000).toString()
+    setOtpCode(code);
+    console.log(otpCode);
+    if (!Form.email) {
+      Alert.alert("Error", "Please enter your email");
+      return;
     } else {
       setIsSubmitting(true);
       try {
-        const result = await signIn(Form.email, Form.password);
-        const res = await getCurrentUser();
-        setUser(res);
-        setIsLogged(true);
-        router.replace("/home");
+        const result = await sendResetEmail(Form.email, code, Form.email);
+        Alert.alert("sent", "message");
       } catch (error) {
         Alert.alert("Error", error.message);
       } finally {
@@ -34,7 +34,6 @@ const SignIn = () => {
       }
     }
   };
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -54,7 +53,7 @@ const SignIn = () => {
             </Text>
           </View>
           <Text className="text-2xl text-start text-white mt-10 font-psemibold">
-            Log in to Aida
+            Reset Password
           </Text>
           <FormField
             title={"Email"}
@@ -65,23 +64,9 @@ const SignIn = () => {
             otherStyles={"mt-7"}
             keyBoardType={"email-address"}
           />
-          <FormField
-            title={"Password"}
-            value={Form.password}
-            handleChangeText={(e) => {
-              setForm({ ...Form, password: e.nativeEvent.text });
-            }}
-            otherStyles={"mt-7"}
-          />
-          <Pressable onPress={() => navigation.navigate("reset-pass")}>
-          <View className="border border-white flex flex-row justify-end px-4 py-1">
-            <Text className="text-[#cdcde0] text-xs font-plight">Forgot Password ?</Text>
-            <Text className="text-secondary text-xs font-pregular pl-1">Reset here</Text>
-          </View>
-          </Pressable>
           <CustomButton
-            title={"Sign In"}
-            handlePress={submit}
+            title={"Reset Password"}
+            handlePress={() => handleReset()}
             containerStyles={"mt-7"}
             isLoading={isSubmitting}
           />

@@ -83,7 +83,6 @@ const SignUp = () => {
           </View>
         </View>
       </ScrollView>
-      <Text>SignUp</Text>
     </SafeAreaView>
   )
 }
