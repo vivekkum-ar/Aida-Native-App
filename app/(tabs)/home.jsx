@@ -6,9 +6,6 @@ import {
   FlatList,
   RefreshControl,
   ToastAndroid,
-  ActivityIndicator,
-  StyleSheet,
-  ActivityIndicatorBase,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { icons, images } from "../../constants";
@@ -171,7 +168,7 @@ const Home = () => {
               <View className="mt-1.5">
                 <Image
                   source={images.logoSmall}
-                  className="w-9 h-10"
+                  className="w-9 h-10 scale-150"
                   resizeMode="contain"
                 ></Image>
               </View>

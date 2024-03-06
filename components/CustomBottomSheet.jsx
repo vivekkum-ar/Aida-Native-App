@@ -35,13 +35,11 @@ const renderBackdrop = useCallback(
       onChange={handleSheetChanges}
       backdropComponent={renderBackdrop}
       handleComponent={() => (
-        <View className="flex flex-row justify-center items-center bg-[#cdcde0] rounded-t-xl">
-          <Ionicons name="chevron-down" size={30} color="#161622" />
-        </View>
+        props.handleComponent
       )}
       // detached={true}
       // add bottom inset to elevate the sheet
-      bottomInset={20}
+      bottomInset={props.bottomInset}
       className=" rounded-full"
       style={{ marginHorizontal: 16, borderCurve: "circular", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
       // set `detached` to true
@@ -50,9 +48,9 @@ const renderBackdrop = useCallback(
       animateOnMount={true}
     >
       <BottomSheetView
-        style={{ backgroundColor: "#cdcde0", height: "100%", borderBottomLeftRadius: 17, borderBottomRightRadius: 17 }}
+        style={{paddingHorizontal:16, backgroundColor: "#cdcde0", height: "100%", borderBottomLeftRadius: 17, borderBottomRightRadius: 17 }}
       >
-        <Text>{props.title}</Text>
+        {props.children}
       </BottomSheetView>
     </BottomSheetModal>
   )

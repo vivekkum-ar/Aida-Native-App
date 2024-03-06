@@ -42,7 +42,7 @@ const Search = () => {
               <View className="mt-1.5">
                 <Image
                   source={images.logoSmall}
-                  className="w-9 h-10"
+                  className="w-9 h-10 scale-150"
                   resizeMode="contain"
                 ></Image>
               </View>

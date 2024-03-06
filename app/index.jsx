@@ -44,7 +44,7 @@ export default function Page() {
           >
             <Image
               source={images.logoSmall}
-              className="w-[80px] h-[64px]"
+              className="w-[80px] h-[64px] scale-150"
               resizeMode="contain"
             />
             <Text className="inline-flex text-4xl text-white font-psemibold pt-[16 px]">

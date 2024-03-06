@@ -87,7 +87,7 @@ const handleSendOtp = async () => {
           >
             <Image
               source={images.logoSmall}
-              className="w-[60px] h-[44px]"
+              className="w-[60px] h-[44px] scale-150"
               resizeMode="contain"
             />
             <Text className="inline-flex text-3xl text-white font-psemibold pt-[16 px]">

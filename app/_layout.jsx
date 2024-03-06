@@ -10,6 +10,7 @@ import {
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
+import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 const RootLayout = () => {
@@ -63,9 +64,17 @@ const handlePresentModalPress = useCallback(() => {
               {/* <Stack.Screen name="shared/index" options={{presentation:"modal"}} /> */}
             </Stack>
             <CustomBottomSheet
-              title="Awesome 🎉"
+              children = {
+                    <Text className="text-gray-500">Bottom Sheet</Text>
+              }
               ref={bottomSheetModalRef}
               snapPoints={["10%", "25%"]}
+              handleComponent={
+                <View className="flex flex-row justify-center items-start bg-[#cdcde0] rounded-t-xl h-6">
+          <Ionicons name="chevron-down" size={30} color="#161622"/>
+        </View>
+              }
+              bottomInset={20}
             />
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
