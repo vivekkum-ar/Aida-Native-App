@@ -11,8 +11,11 @@ import InfoBox from '../../components/InfoBox'
 import LottieView from 'lottie-react-native'
 import millify from 'millify'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import CustomModal from '../../components/CustomModal'
 
 const Liked = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const { user ,setUser, setIsLogged } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
   // const [debugText, setDebugText] = useState("");
@@ -142,9 +145,11 @@ const Liked = () => {
     } catch (error) {
       // Saving error
       ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
-      Alert.alert("Error", error.message, [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-      ]);
+      // Alert.alert("Error", error.message, [
+      //   { text: "OK", onPress: () => console.log("OK Pressed") },
+      // ]);
+    setAlertData({ title: "Error", message: error.message });
+    setModalVisible(true);
       throw new Error(error);
     }
   };
@@ -202,7 +207,15 @@ const Liked = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-
+      <CustomModal
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <FlatList
         data={likedTabActive ? data ?? [] : saveData}
         keyExtractor={(item) => item.$id}

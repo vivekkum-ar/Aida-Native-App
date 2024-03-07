@@ -7,7 +7,10 @@ import CustomButton from "../../components/CustomButton";
 import { Link, router, useNavigation } from "expo-router";
 import { getCurrentUser, sendResetEmail, signIn } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/globalProvider";
+import CustomModal from "../../components/CustomModal";
 const SignIn = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const navigation = useNavigation();
   const { setUser, setIsLogged } = useGlobalContext();
   const [Form, setForm] = useState({
@@ -17,7 +20,9 @@ const SignIn = () => {
 
   const submit = async () => {
     if (!Form.email || !Form.password) {
-      Alert.alert("Error", "Please fill all fields");
+      // Alert.alert("Error", "Please fill all fields");
+      setAlertData({title:"Error",message:"Please fill all fields"});
+    setModalVisible(true);
       // return;
     } else {
       setIsSubmitting(true);
@@ -28,7 +33,9 @@ const SignIn = () => {
         setIsLogged(true);
         router.replace("/home");
       } catch (error) {
-        Alert.alert("Error", error.message);
+        // Alert.alert("Error", error.message);
+        setAlertData({title:"Error",message:"Invalid email or password"});
+    setModalVisible(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -38,6 +45,15 @@ const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <SafeAreaView className="bg-primary h-full">
+      <CustomModal
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <ScrollView className="" contentContainerStyle={{ height: "100%" }}>
         <View className="w-full  justify-center min-h-[85vh] my-auto px-6">
           <View

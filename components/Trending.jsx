@@ -28,7 +28,7 @@ const zoomOut = {
   },
 };
 
-const TrendingItem = ({ activeItem, item }) => {
+export const TrendingItem = ({ activeItem, item }) => {
   const [play, setPlay] = useState(false);
 
   return (

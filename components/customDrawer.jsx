@@ -64,9 +64,9 @@ const CustomDrawerComponent = (props) => {
             </View>
 
           </TouchableOpacity>
-            <View className="px-4 opacity-60">
+            <View className="px-4 opacity-50">
               <Text className="font-pregular text-xs text-[#cdcde0]">
-                &nbsp;&nbsp;ver 1.0.0
+                ver 1.0.0
               </Text>
           </View>
         </View>

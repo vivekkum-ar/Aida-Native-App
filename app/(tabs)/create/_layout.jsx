@@ -6,11 +6,17 @@ import AiVideo from './aivideo';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TabBarIcon = ({icon, color, name}) => {
-    return(
-      <View className="flex flex-row w-20 items-center justify-center -translate-x-5"><Ionicons name={icon} size={25} color={color}/><Text style={{color:color}} className="font-pmedium">{" "}{name}</Text></View>
-    );
-  }
+const TabBarIcon = ({ icon, color, name }) => {
+  return (
+    <View className="flex flex-row w-20 items-center justify-center -translate-x-5">
+      <Ionicons name={icon} size={25} color={color} />
+      <Text style={{ color: color }} className="font-pmedium">
+        {" "}
+        {name}
+      </Text>
+    </View>
+  );
+};
 const Layout = () => {
   return (
     <Tab.Navigator screenOptions={{
@@ -29,10 +35,9 @@ const Layout = () => {
         tabBarContentContainerStyle: {
           // paddingTop:10,
         },
-  
         tabBarAndroidRipple: true,
-      }}>
-        
+      }}
+      >
         <Tab.Screen name="Upload" component={CreateUpload} options={{
           tabBarIcon:({color}) => (
             <TabBarIcon

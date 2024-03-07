@@ -20,13 +20,13 @@ const SearchInput = ({ initialQuery }) => {
 
       <TouchableOpacity
         onPress={() => {
-          if (query === "")
-            return Alert.alert(
-              "Missing Query",
-              "Please input something to search results across database"
-            );
-
-          if (pathname.startsWith("/search")) router.setParams({ query });
+          if (query === ""){
+            setAlertData({title:"Missing Input",message:"Please input a search query"});
+    setModalVisible(true);
+    return;
+          }
+          
+    if (pathname.startsWith("/search")) router.setParams({ query });
           else router.push(`/search/${query}`);
         }}
       >

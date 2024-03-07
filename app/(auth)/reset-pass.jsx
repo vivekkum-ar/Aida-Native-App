@@ -8,7 +8,10 @@ import { Link, useNavigation } from "expo-router";
 import { sendResetEmail, updatePasswordWithEmail } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/globalProvider";
 import LottieView from "lottie-react-native";
+import CustomModal from "../../components/CustomModal";
 const SignIn = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const { setUser, setIsLogged } = useGlobalContext();
   const [Form, setForm] = useState({
     email: "",
@@ -30,7 +33,8 @@ const SignIn = () => {
   /* ---------------------------------------------------------------------------------------------- */
 const handleSendOtp = async () => {
   if (!Form.email) {
-    Alert.alert("Error", "Please enter your email");
+    setAlertData({title:"Error",message:"Please enter your email"});
+    setModalVisible(true);
     return;
   } else {
     const newCode = Math.floor(100000 + Math.random() * 900000).toString(); // Generate the OTP
@@ -39,10 +43,14 @@ const handleSendOtp = async () => {
     setIsSubmitting(true);
     try {
       const result = await sendResetEmail(Form.email, newCode, Form.email);
-      Alert.alert("Success", `Otp sent to ${result.email} successfully`);
+      // Alert.alert("Success", `Otp sent to ${result.email} successfully`);
+      setAlertData({title:"Success",message:`Otp sent to ${Form.email} successfully`});
+    setModalVisible(true);
     // console.log(Form.otp,code,newCode);
     } catch (error) {
-      Alert.alert("Error", error.message);
+      // Alert.alert("Error", error.message);
+      setAlertData({title:"Error",message:error.message});
+    setModalVisible(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -55,10 +63,14 @@ const handleSendOtp = async () => {
   const handleReset = async () => {
     // console.log(Form.otp,code);
     if (!Form.email || !Form.otp || !Form.password) {
-      Alert.alert("Error", "Please enter your OTP and new password");
+      // Alert.alert("Error", "Please enter your OTP and new password");
+      setAlertData({title:"Error",message:"Please enter your OTP and new password"});
+    setModalVisible(true);
       return;
     } else if(Form.otp.toString() !== code.toString()){
-      Alert.alert("Error", "Invalid OTP");
+      // Alert.alert("Error", "Invalid OTP");
+      setAlertData({title:"Error",message:"Invalid OTP"});
+    setModalVisible(true);
     } else{
       animation.current?.reset();
       animation.current?.play(startFrame = 52, endFrame = 112);
@@ -68,9 +80,12 @@ const handleSendOtp = async () => {
         Alert.alert("Success", "Password reset successfull !", [
           { text: "OK", onPress: () => navigation.goBack() },
         ]);
+
       
       } catch (error) {
-        Alert.alert("Error", error.message);
+        // Alert.alert("Error", error.message);
+        setAlertData({title:"Error",message:error.message});
+    setModalVisible(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -79,6 +94,15 @@ const handleSendOtp = async () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <SafeAreaView className="bg-primary h-full">
+      <CustomModal 
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <ScrollView className="" contentContainerStyle={{ height: "100%" }}>
         <View className="w-full  justify-center min-h-[85vh] my-auto px-6">
           <View

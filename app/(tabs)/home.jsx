@@ -22,8 +22,11 @@ import VideoCard from "../../components/VideoCard";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGlobalContext } from "../../context/globalProvider";
+import CustomModal from "../../components/CustomModal";
 
 const Home = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const { user } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
   const { data, setData, refetch } = useAppwrite(getAllPosts);
@@ -129,9 +132,11 @@ const Home = () => {
     } catch (error) {
       // Saving error
       ToastAndroid.show("Post not saved", ToastAndroid.SHORT);
-      Alert.alert("Error", error.message, [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-      ]);
+      // Alert.alert("Error", error.message, [
+      //   { text: "OK", onPress: () => console.log("OK Pressed") },
+      // ]);
+      setAlertData({title:"Error",message:error.message});
+    setModalVisible(true);
       throw new Error(error);
     }
   };
@@ -143,6 +148,15 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-primary">
+      <CustomModal
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <FlatList
         data={data}
         keyExtractor={(item) => item.$id}

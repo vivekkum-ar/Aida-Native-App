@@ -9,7 +9,10 @@ import * as DocumentPicker from 'expo-document-picker'
 import { router } from 'expo-router'
 import { createVideo } from '../../../lib/appwrite'
 import { useGlobalContext } from '../../../context/globalProvider'
+import CustomModal from '../../../components/CustomModal'
 const CreateUpload = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const {user} = useGlobalContext()
   const [uploading, setUploading] = useState(false)
   const [Form, setForm] = useState({
@@ -25,17 +28,24 @@ const CreateUpload = () => {
   const submit = async () => {
     // console.log(Form)
     if(!Form.title || !Form.video || !Form.thumbnail || !Form.prompt) {
-      return Alert.alert("Error","Please fill all fields");
+      // return Alert.alert("Error","Please fill all fields");
+      setAlertData({title:"Error",message:"Please fill all fields"});
+    setModalVisible(true);
+    return;
     } 
     else{
       setUploading(true);
       try {
 
         await createVideo(Form);
-        Alert.alert("Success","Post created successfully");
+        // Alert.alert("Success","Post created successfully");
+        setAlertData({title:"Success",message:"Post created successfully"});
+    setModalVisible(true);
         router.push("/home");
       } catch (error) {
-        Alert.alert("Error",error.message);
+        // Alert.alert("Error",error.message);
+        setAlertData({title:"Error",message:error.message});
+    setModalVisible(true);
       } finally {
         setForm({
           title:"",
@@ -65,12 +75,17 @@ const CreateUpload = () => {
         // console.log(result)
       }
     } else if(result.canceled) {
-      Alert.alert("No Document picked","Please pick a document");
+      // Alert.alert("No Document picked","Please pick a document");
+      // console.log("first");
+      setAlertData({title:"No Document Picked",message:"Please pick a document"});
+    setModalVisible(true);
       return;
     } 
     else {
       setTimeout(() => {
-        Alert.alert("Document picked",JSON.stringify(result,null,2));
+        // Alert.alert("Document picked",JSON.stringify(result,null,2));
+        setAlertData({title:"Document Picked",message:JSON.stringify(result,null,2)});
+    setModalVisible(true);
         // Alert.alert("No Document picked","Please pick a document");
       }, 100);
     }
@@ -78,6 +93,15 @@ const CreateUpload = () => {
 
   return (
     <SafeAreaView className="h-full bg-primary">
+      <CustomModal
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <ScrollView className="px-4">
         {/* <Text className="text-white text-2xl font-psemibold">Upload Video</Text> */}
         <FormField

@@ -7,9 +7,11 @@ import CustomButton from '../../components/CustomButton'
 import { Link, router } from 'expo-router'
 import { createUser } from '../../lib/appwrite'
 import { useGlobalContext } from "../../context/globalProvider";
+import CustomModal from '../../components/CustomModal'
 
 const SignUp = () => {
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: ""});
   const { setUser, setIsLogged } = useGlobalContext();
   const [Form, setForm] = useState({
     username:"",
@@ -19,7 +21,9 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
  const submit = async () => {
   if(!Form.username || !Form.email || !Form.password) {
-    Alert.alert("Error","Please fill all fields");
+    // Alert.alert("Error","Please fill all fields");
+    setAlertData({title:"Error",message:"Please fill all fields"});
+    setModalVisible(true);
   }
   else {
  setIsSubmitting(true);
@@ -29,7 +33,9 @@ const SignUp = () => {
   setIsLogged(true);
   router.replace("/home");
  } catch (error) {
-  Alert.alert("Error",error.message);
+  // Alert.alert("Error",error.message);
+  setAlertData({title:"Error",message:"Please enter your email"});
+    setModalVisible(true);
  }
  finally {
     setIsSubmitting(false);
@@ -38,6 +44,15 @@ const SignUp = () => {
 }
   return (
     <SafeAreaView className="bg-primary h-full">
+      <CustomModal
+      ModalVisibility={modalVisible}
+      UpdateModalVisibility={setModalVisible}
+      closeButton={true}
+      AlertMessage={alertData.message}
+      AlertTitle={alertData.title}
+      closeButtonText="OK"
+      widthFix={true}
+      />
       <ScrollView className=""  contentContainerStyle={{height: "100%"}}>
         <View className="w-full  justify-center min-h-[85vh] my-auto px-6">
         <View className="flex flex-row items-center 
