@@ -42,7 +42,8 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.6",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-navigation-bar": "~3.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

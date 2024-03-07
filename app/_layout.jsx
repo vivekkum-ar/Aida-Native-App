@@ -13,8 +13,11 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import * as NavigationBar from 'expo-navigation-bar';
+
 const RootLayout = () => {
   SplashScreen.preventAutoHideAsync();
+  NavigationBar.setBackgroundColorAsync("#161622");
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
