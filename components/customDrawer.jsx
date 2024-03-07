@@ -3,7 +3,7 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { Linking, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Octicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { signOut } from "../lib/appwrite";
 import { router } from "expo-router";
 import { useGlobalContext } from "../context/globalProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { images } from "../constants";
 
 const CustomDrawerComponent = (props) => {
   // const{top, bottom} = useSafeAreaInsets();
@@ -42,9 +43,33 @@ const CustomDrawerComponent = (props) => {
       {...props}
       contentContainerStyle={{
         backgroundColor: "#161622",
+        borderLeftWidth: 0.5,
+        borderLeftColor: "#cdcde0",
         flex: 1,
       }}
     >
+        <View className="px-2 py-1 w-[100%] h-24 flex justify-center items-center mb-4">
+          <TouchableOpacity
+            activeOpacity={0.5}
+            // onPress={() => logout()}
+            className="h-full rounded-sm flex flex-row justify-center items-center w-full grow-1 px-3"
+          >
+            <View className="">
+              <Image source={images.logoSmall} className="h-20 w-20"></Image>
+            </View>
+            <View className="">
+              <Text className="font-pbold text-3xl text-[#cdcde0]">
+                &nbsp;&nbsp;Aida
+              </Text>
+            </View>
+
+          </TouchableOpacity>
+            <View className="px-4 opacity-60">
+              <Text className="font-pregular text-xs text-[#cdcde0]">
+                &nbsp;&nbsp;ver 1.0.0
+              </Text>
+          </View>
+        </View>
       <DrawerItemList {...props} />
 
       {/* ------------------------------------- Privacy Policy Page ------------------------------------ */}
