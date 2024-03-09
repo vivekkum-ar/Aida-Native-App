@@ -7,8 +7,15 @@ import { icons } from "../../../constants";
 import * as DocumentPicker from "expo-document-picker";
 import { ResizeMode } from "expo-av";
 import CustomButton from "../../../components/CustomButton";
+import { useGlobalContext } from "../../../context/globalProvider";
+import CustomModal from "../../../components/CustomModal";
+
 
 const EditProfile = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertData, setAlertData] = useState({ title: "", message: "" });
+  const { user } = useGlobalContext();
+  
   const [Form, setForm] = useState({
     name: "",
     updatedUserName: "",
@@ -54,7 +61,45 @@ const EditProfile = () => {
   };
   return (
     <SafeAreaView className="bg-primary px-4 ">
-      <ScrollView className="" scrollsToTop>
+      <CustomModal
+        AlertMessage={alertData.message}
+        AlertTitle={alertData.title}
+        ModalVisibility={modalVisible}
+        UpdateModalVisibility={setModalVisible}
+        widthFix={true}
+        // closeButton={true}
+        // closeButtonText={"Close"}
+        children={
+          <View className="justify-end gap-x-4 flex flex-row items-end">
+        <TouchableOpacity
+                className="mt-4"
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                  logout();
+                }}
+              >
+                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                  <Text className="font-psemibold text-md text-secondary text-center">
+                    Ok
+                  </Text>
+                </View>
+              </TouchableOpacity>
+        <TouchableOpacity
+                className="mt-4"
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                  <Text className="font-psemibold text-md text-secondary text-center">
+                    Close
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              </View>
+              }
+      ></CustomModal>
+      <ScrollView className="">
         <Text className="font-psemibold text-2xl text-white py-4">
           Edit Profile
         </Text>
@@ -74,22 +119,35 @@ const EditProfile = () => {
                   borderWidth={2}
                   borderColor="#cdcde0"
                 ></Image>
-                <Image source={icons.upload} className="h-10 w-10 absolute top-12 border-2 rounded-full border-secondary bg-primary" borderWidth={2} borderColor="#fc9001"/>
+                <Image
+                  source={icons.upload}
+                  className="h-10 w-10 absolute top-12 border-2 rounded-full border-secondary bg-primary"
+                  borderWidth={2}
+                  borderColor="#fc9001"
+                />
                 <Text className="text-sm mb-10 mt-2 text-gray-100 font-pmedium">
                   Change Profile Picture
                 </Text>
               </>
             ) : (
-              <View className="w-full h-16 border-2 border-black-200 flex-row space-x-2 px-4 bg-black-100 rounded-2xl justify-center items-center">
+              <>
                 <Image
-                  className="w-5 h-5"
+                  source={{ uri: user.avatar }}
+                  className="h-32 w-32 rounded-full"
+                  resizeMode={ResizeMode.COVER}
+                  borderWidth={2}
+                  borderColor="#cdcde0"
+                ></Image>
+                <Image
                   source={icons.upload}
-                  resizeMode="contain"
+                  className="h-10 w-10 absolute top-12 border-2 rounded-full border-secondary bg-primary"
+                  borderWidth={2}
+                  borderColor="#fc9001"
                 />
-                <Text className="text-sm text-gray-100 font-pmedium ">
-                  Choose a file
+                <Text className="text-sm mb-10 mt-2 text-gray-100 font-pmedium">
+                  Change Profile Picture
                 </Text>
-              </View>
+              </>
             )}
           </TouchableOpacity>
         </View>
@@ -121,7 +179,18 @@ const EditProfile = () => {
           }
           otherStyles="my-10"
         ></FormField>
-        <CustomButton title="Change Password" className="mt-10"></CustomButton>
+        <CustomButton
+          title="Change Password"
+          className="mt-10"
+          primaryColor="bg-red-500 text-white"
+          textStyles={"text-white"}
+          handlePress={() => {
+            setAlertData({title:"Change Password",message:<Text>
+              For added <Text className="text-red-500">security</Text>, you will be logged out! Press Ok to continue.
+            </Text>})
+            setModalVisible(true);
+          }}
+        ></CustomButton>
       </ScrollView>
     </SafeAreaView>
   );

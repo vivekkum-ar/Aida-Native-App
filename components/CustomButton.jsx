@@ -7,17 +7,18 @@ const CustomButton = ({
   containerStyles,
   textStyles,
   isLoading,
+  primaryColor,
 }) => {
   return (
     <TouchableOpacity
-      className={`bg-secondary rounded-xl min-h-[62px] justify-center ${
+      className={`${primaryColor ? primaryColor : "bg-secondary"} rounded-xl min-h-[62px] justify-center ${
         isLoading ? "opacity-50" : ""
       } items-center ${containerStyles}`}
       onPress={handlePress}
       activeOpacity={0.7}
       disabled={isLoading}
     >
-      <Text className={`${textStyles} text-primary font-psemibold text-lg`}>
+      <Text className={`text-primary ${textStyles} font-psemibold text-lg`}>
         {title}
       </Text>
     </TouchableOpacity>

@@ -1,68 +1,36 @@
 {
   "expo": {
-    "name": "Aida",
-    "slug": "Aida",
-    "scheme": ["aida"],
+    "name": "Aida-new",
+    "slug": "Aida-new",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo-small.png",
-    "userInterfaceStyle": "dark",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.viv.aida",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "aidain.web.app",
-              "pathPrefix": "/records"
-            },
-            {
-              "scheme": "https",
-              "host": "aidain.firebaseapp.com"
-            },
-            {
-              "scheme": "https",
-              "host": "*aidain.web.app"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
-      ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/icons/icon.png"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router"
     ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "2e3d8621-5a43-4043-a93d-86bd6037c93c"
-      }
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
