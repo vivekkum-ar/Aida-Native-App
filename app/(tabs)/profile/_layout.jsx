@@ -84,7 +84,7 @@ export default function Layout() {
           }}
           />
         <Drawer.Screen
-          name="user" // This is the name of the page and must match the url from root
+          name="settings" // This is the name of the page and must match the url from root
           options={{
             drawerLabel: 'Settings',
             drawerPosition: 'right',

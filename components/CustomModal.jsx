@@ -16,6 +16,7 @@ const CustomModal = ({
   AlertMessage,
   AlertTitle,
   widthFix,
+  children
 }) => {
   return (
     <Modal
@@ -41,6 +42,7 @@ const CustomModal = ({
           >
             {AlertMessage}
           </Text>
+          {children}
           <View className="justify-between items-end">
             {closeButton && (
               <TouchableOpacity

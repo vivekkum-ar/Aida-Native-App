@@ -12,22 +12,49 @@ import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { icons, images } from "../../../constants";
 import CustomModal from "../../../components/CustomModal";
+import LottieView from "lottie-react-native";
+import musicLottie from "../../../assets/music-animation.json";
+import editingLottie from "../../../assets/editing-lady.json";
+import storyWriting from "../../../assets/script-writing.json";
 
 const AiVideo = () => {
   const [query, setQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [alertData, setAlertData] = useState({ title: "", message: ""});
+  const [alertData, setAlertData] = useState({ title: "", message: "" });
   return (
     <View className="flex-1 p-2 bg-primary">
-      <CustomModal 
-      ModalVisibility={modalVisible}
-      UpdateModalVisibility={setModalVisible}
-      closeButton={true}
-      AlertMessage={alertData.message}
-      AlertTitle={alertData.title}
-      closeButtonText="OK"
-      widthFix={true}
-      />
+      <CustomModal
+        ModalVisibility={modalVisible}
+        UpdateModalVisibility={setModalVisible}
+        closeButton={query ? false : true}
+        AlertMessage={alertData.message}
+        AlertTitle={alertData.title}
+        closeButtonText="OK"
+        widthFix={true}
+      >
+        {query ? (
+          <View className="flex-row justify-center">
+            <LottieView
+              autoPlay
+              loop
+              source={setTimeout(() => {
+                if (Math.round(Math.random() * 2) + 1 === 1) {
+                  return musicLottie;
+                } else if (Math.round(Math.random() * 2) + 1 == 2) {
+                  return editingLottie;
+                } else {
+                  return storyWriting;
+                }
+              }, 1500)}
+              colorFilters={[{ keypath: "button", color: "#FF0000" }]}
+              className="w-52 h-52"
+            ></LottieView>
+          </View>
+        ) : (
+          ""
+        )}
+      </CustomModal>
+
       <StatusBar style="light" backgroundColor="#161622" hidden={false} />
       <View className="px-4 space-y-2">
         <View className="flex flex-row justify-between items-start">
@@ -63,10 +90,21 @@ const AiVideo = () => {
 
           <TouchableOpacity
             onPress={() => {
-              if (query === "")
-                setAlertData({title:"Error",message:"Please enter a prompt to generate a video"});
-    setModalVisible(true);
+              if (query === "") {
+                setAlertData({
+                  title: "Error",
+                  message: "Please enter a prompt to generate a video",
+                });
+                setModalVisible(true);
                 return;
+              } else {
+                setAlertData({
+                  title: "Loading",
+                  message: "Preparing your video.....",
+                });
+                setModalVisible(true);
+                return;
+              }
             }}
             onLongPress={() => {
               setModalVisible(true);
