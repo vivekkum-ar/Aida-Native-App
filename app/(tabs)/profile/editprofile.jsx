@@ -9,10 +9,9 @@ import { ResizeMode } from "expo-av";
 import CustomButton from "../../../components/CustomButton";
 import { useGlobalContext } from "../../../context/globalProvider";
 import CustomModal from "../../../components/CustomModal";
-import { signOut } from "../../../lib/appwrite";
+import { editProfileData, signOut } from "../../../lib/appwrite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-
 
 const EditProfile = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,6 +22,7 @@ const EditProfile = () => {
     await AsyncStorage.setItem(`${user.$id}_ids`, JSON.stringify([]));
     // ToastAndroid.show("Data Cleared", ToastAndroid.SHORT);
   };
+
   const logout = async () => {
     await signOut();
     // gives error $id is null
@@ -44,6 +44,25 @@ const EditProfile = () => {
     updatedEmail: "",
   });
 
+  const updateName = async () => {
+   if(!Form.name || !Form.updatedUserName){
+    setAlertData({title:"Error", message:"Please fill all fields"});
+    setModalVisible(true);
+    return;
+   } else{
+    try {
+      await editProfileData(Form.name,Form.updatedUserName,user.$id);
+      setAlertData({
+        title:"Success",
+        message:"Name updated successfully"
+      });
+      setModalVisible(true);
+    } catch (error) {
+      setAlertData({ title: "Error", message: error.message });
+      setModalVisible(true);
+    }
+   }
+  }
   const openFilePicker = async (selectType) => {
     const result = await DocumentPicker.getDocumentAsync({
       type:
@@ -97,7 +116,7 @@ const EditProfile = () => {
               className="mt-4"
               onPress={() => {
                 setModalVisible(!modalVisible);
-                logout();
+                // logout();
               }}
             >
               <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
@@ -208,18 +227,7 @@ const EditProfile = () => {
           containerStyles={"mb-4"}
           primaryColor="bg-secondary-200 text-white"
           textStyles={"text-white"}
-          handlePress={() => {
-            setAlertData({
-              title: "Change Password",
-              message: (
-                <Text>
-                  For added <Text className="text-red-500">security</Text>, you
-                  will be logged out! Press Ok to continue.
-                </Text>
-              ),
-            });
-            setModalVisible(true);
-          }}
+          handlePress={updateName}
         ></CustomButton>
 
         <CustomButton
