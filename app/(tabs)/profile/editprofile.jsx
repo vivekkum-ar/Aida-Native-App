@@ -93,33 +93,33 @@ const EditProfile = () => {
         // closeButtonText={"Close"}
         children={
           <View className="justify-end gap-x-4 flex flex-row items-end">
-        <TouchableOpacity
-                className="mt-4"
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                  logout();
-                }}
-              >
-                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
-                  <Text className="font-psemibold text-md text-secondary text-center">
-                    Ok
-                  </Text>
-                </View>
-              </TouchableOpacity>
-        <TouchableOpacity
-                className="mt-4"
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
-                  <Text className="font-psemibold text-md text-secondary text-center">
-                    Close
-                  </Text>
-                </View>
-              </TouchableOpacity>
+            <TouchableOpacity
+              className="mt-4"
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                logout();
+              }}
+            >
+              <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                <Text className="font-psemibold text-md text-secondary text-center">
+                  Ok
+                </Text>
               </View>
-              }
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="mt-4"
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                <Text className="font-psemibold text-md text-secondary text-center">
+                  Close
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        }
       ></CustomModal>
       <ScrollView className="">
         <Text className="font-psemibold text-2xl text-white py-4">
@@ -199,17 +199,44 @@ const EditProfile = () => {
           handleChangeText={(e) =>
             setForm({ ...Form, updatedEmail: e.nativeEvent.text })
           }
-          otherStyles="my-10"
+          otherStyles="mt-10 mb-6"
         ></FormField>
+
+        <CustomButton
+          title="Update Profile"
+          className=""
+          containerStyles={"mb-4"}
+          primaryColor="bg-secondary-200 text-white"
+          textStyles={"text-white"}
+          handlePress={() => {
+            setAlertData({
+              title: "Change Password",
+              message: (
+                <Text>
+                  For added <Text className="text-red-500">security</Text>, you
+                  will be logged out! Press Ok to continue.
+                </Text>
+              ),
+            });
+            setModalVisible(true);
+          }}
+        ></CustomButton>
+
         <CustomButton
           title="Change Password"
-          className="mt-10"
+          className=""
           primaryColor="bg-red-500 text-white"
           textStyles={"text-white"}
           handlePress={() => {
-            setAlertData({title:"Change Password",message:<Text>
-              For added <Text className="text-red-500">security</Text>, you will be logged out! Press Ok to continue.
-            </Text>})
+            setAlertData({
+              title: "Change Password",
+              message: (
+                <Text>
+                  For added <Text className="text-red-500">security</Text>, you
+                  will be logged out! Press Ok to continue.
+                </Text>
+              ),
+            });
             setModalVisible(true);
           }}
         ></CustomButton>
