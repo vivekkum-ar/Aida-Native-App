@@ -9,13 +9,35 @@ import { ResizeMode } from "expo-av";
 import CustomButton from "../../../components/CustomButton";
 import { useGlobalContext } from "../../../context/globalProvider";
 import CustomModal from "../../../components/CustomModal";
+import { signOut } from "../../../lib/appwrite";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 
 const EditProfile = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [alertData, setAlertData] = useState({ title: "", message: "" });
-  const { user } = useGlobalContext();
-  
+  const { user, setIsLogged } = useGlobalContext();
+  const handleSaveStorageClear = async () => {
+    await AsyncStorage.setItem(user.$id, JSON.stringify([]));
+    await AsyncStorage.setItem(`${user.$id}_ids`, JSON.stringify([]));
+    // ToastAndroid.show("Data Cleared", ToastAndroid.SHORT);
+  };
+  const logout = async () => {
+    await signOut();
+    // gives error $id is null
+    // setUser(null);
+
+    /* ---------------------------------------------- - --------------------------------------------- */
+    /* ----------- Delete all data from storage when user logs out to prevent data leakage ---------- */
+    /* ---------------- otherwise user will be able to see the data of previous user ---------------- */
+    /* ---------------------------------------------- - --------------------------------------------- */
+    handleSaveStorageClear();
+
+    setIsLogged(false);
+    router.replace("/reset-pass");
+  };
+  // console.log(user.avatar);
   const [Form, setForm] = useState({
     name: "",
     updatedUserName: "",
