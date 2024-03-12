@@ -29,19 +29,20 @@ const SignIn = () => {
       try {
         const result = await signIn(Form.email, Form.password);
         const res = await getCurrentUser();
+        // console.log("res",res);
         setUser(res);
         setIsLogged(true);
         router.replace("/home");
       } catch (error) {
         // Alert.alert("Error", error.message);
         setAlertData({title:"Error",message:"Invalid email or password"});
-    setModalVisible(true);
+        setModalVisible(true);
       } finally {
         setIsSubmitting(false);
       }
     }
   };
-
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
     <SafeAreaView className="bg-primary h-full">

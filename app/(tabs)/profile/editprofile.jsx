@@ -14,8 +14,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 const EditProfile = () => {
+  /* --------------------- State for modal which asks to logout when change pwd is reqd. -------------------- */
   const [modalVisible, setModalVisible] = useState(false);
-  const [alertData, setAlertData] = useState({ title: "", message: "" });
+
+  /* -------------------- State for modal which will ask for pwd if email changeis reqd. -------------------- */
+  const [modalVisible2, setModalVisible2] = useState(false);
+
+  const [alertData, setAlertData] = useState({
+    title: "title",
+    message: "messagemessage",
+  });
   const { user, setIsLogged } = useGlobalContext();
   const handleSaveStorageClear = async () => {
     await AsyncStorage.setItem(user.$id, JSON.stringify([]));
@@ -39,30 +47,52 @@ const EditProfile = () => {
   };
   // console.log(user.avatar);
   const [Form, setForm] = useState({
-    name: "",
-    updatedUserName: "",
-    updatedEmail: "",
+    name: user.name,
+    updatedUserName: user.username,
+    updatedEmail: user.email,
+    password: "",
   });
 
-  const updateName = async () => {
-   if(!Form.name || !Form.updatedUserName){
-    setAlertData({title:"Error", message:"Please fill all fields"});
-    setModalVisible(true);
-    return;
-   } else{
-    try {
-      await editProfileData(Form.name,Form.updatedUserName,user.$id);
-      setAlertData({
-        title:"Success",
-        message:"Name updated successfully"
-      });
+  const updateData = async () => {
+    if(!Form.name || !Form.updatedUserName || !Form.updatedEmail) {
+      setAlertData({ title: "Error", message: "Please fill all fields" });
       setModalVisible(true);
-    } catch (error) {
-      setAlertData({ title: "Error", message: error.message });
-      setModalVisible(true);
+      return;
+    } else {
+      /* ---------------------------------------------- - --------------------------------------------- */
+      /* ----------------------- if all fields are filled then, ask for password ---------------------- */
+      /* ---------------------------------------------- - --------------------------------------------- */
+      if(!Form.password){
+        setAlertData({ title: "Authentication", message: <Text>
+          For added <Text className="text-red-500">security</Text>, please enter your password.
+        </Text> });
+        setModalVisible2(true);
+        return;
+      }
+      try {
+        await editProfileData(Form.name, Form.updatedUserName, Form.updatedEmail, Form.password, user.$id);
+        /* ---------------------------------------------- - --------------------------------------------- */
+        /* --------------------- Clearing the password form state as if it persists --------------------- */
+        /* ---------------------- then password is reqd only once but email can be ---------------------- */
+        /* --------------------- changed multiple times in quick successions, maybe --------------------- */
+        /* ------------------------------------ debouncing can help? ------------------------------------ */
+        /* ---------------------------------------------- - --------------------------------------------- */
+        setForm({...Form,password:""});
+        /* ---------------------------------------------- - --------------------------------------------- */
+        
+        
+        setAlertData({
+          title: "Success",
+          message: "Details updated successfully",
+        });
+        setModalVisible(true);
+      } catch (error) {
+        setAlertData({ title: "Error", message: error.message });
+        setModalVisible(true);
+      }
     }
-   }
-  }
+  };
+  
   const openFilePicker = async (selectType) => {
     const result = await DocumentPicker.getDocumentAsync({
       type:
@@ -100,14 +130,103 @@ const EditProfile = () => {
       }, 100);
     }
   };
+  // console.log("user.name",user);
   return (
     <SafeAreaView className="bg-primary px-4 ">
+
+{/* ---------------------------------------------------------------------------------------------- */
+/*                      modal which will ask for pwd if email change is reqd.                     */
+/* ---------------------------------------------------------------------------------------------- */}
+      <CustomModal
+        AlertMessage={alertData.message}
+        AlertTitle={alertData.title}
+        ModalVisibility={modalVisible2}
+        UpdateModalVisibility={setModalVisible2}
+        widthFix={true}
+        key={2}
+        children={
+          <View>
+            <FormField
+              otherStyles={"mt-4"}
+              title={"Password"}
+              placeholder={"●●●●●●●●"}
+              key={1}
+              value={Form.password}
+              handleChangeText={(e) => {
+                setForm({ ...Form, password: e.nativeEvent.text });
+              }}
+            ></FormField>
+
+            <View className="justify-end gap-x-4 flex flex-row items-end">
+              <TouchableOpacity
+                className="mt-4"
+                onPress={() => {
+                  setModalVisible2(!modalVisible2);
+                  // logout();
+                  async function upd() {
+                    try {
+                      await editProfileData(
+                        Form.name,
+                        Form.updatedUserName,
+                        Form.updatedEmail,
+                        Form.password,
+                        user.$id
+                      );
+                      // setModalVisible2(false);
+                      /* ---------------------------------------------- - --------------------------------------------- */
+                      /* --------------------- Clearing the password form state as if it persists --------------------- */
+                      /* ---------------------- then password is reqd only once but email can be ---------------------- */
+                      /* --------------------- changed multiple times in quick successions, maybe --------------------- */
+                      /* ------------------------------------ debouncing can help? ------------------------------------ */
+                      /* ---------------------------------------------- - --------------------------------------------- */
+                      setForm({...Form, password:""});
+                      /* ---------------------------------------------- - --------------------------------------------- */
+                      setAlertData({
+                        title: "Success",
+                        message: "Details updated successfully",
+                      });
+                      setModalVisible(true);
+                    } catch (error) {
+                      setAlertData({ title: "Error", message: error.message });
+                      setModalVisible(true);
+                    }
+                  }
+                  upd();
+                }}
+              >
+                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                  <Text className="font-psemibold text-md text-secondary text-center">
+                    Ok
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="mt-4"
+                onPress={() => {
+                  setModalVisible2(!modalVisible2);
+                }}
+              >
+                <View className="flex items-center justify-center px-2 border border-secondary rounded-md">
+                  <Text className="font-psemibold text-md text-secondary text-center">
+                    Close
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        }
+      />
+
+{/* ---------------------------------------------------------------------------------------------- */
+/*                       modal which asks to logout when change pwd is reqd.                      */
+/* ---------------------------------------------------------------------------------------------- */}
       <CustomModal
         AlertMessage={alertData.message}
         AlertTitle={alertData.title}
         ModalVisibility={modalVisible}
         UpdateModalVisibility={setModalVisible}
         widthFix={true}
+        key={1}
         // closeButton={true}
         // closeButtonText={"Close"}
         children={
@@ -140,6 +259,10 @@ const EditProfile = () => {
           </View>
         }
       ></CustomModal>
+
+{/* ---------------------------------------------------------------------------------------------- */
+/*                                  Editprofile stack starts here                                 */
+/* ---------------------------------------------------------------------------------------------- */}
       <ScrollView className="">
         <Text className="font-psemibold text-2xl text-white py-4">
           Edit Profile
@@ -227,7 +350,7 @@ const EditProfile = () => {
           containerStyles={"mb-4"}
           primaryColor="bg-secondary-200 text-white"
           textStyles={"text-white"}
-          handlePress={updateName}
+          handlePress={updateData}
         ></CustomButton>
 
         <CustomButton

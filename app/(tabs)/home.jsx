@@ -177,7 +177,7 @@ const Home = () => {
                 <Text className="font-pmedium text-sm text-gray-100">
                   Welcome Back
                 </Text>
-                <Text className="font-psemibold text-2xl text-white">Viv</Text>
+                <Text className="font-psemibold text-2xl text-white">{user.username}</Text>
               </View>
               <View className="mt-1.5">
                 <Image
